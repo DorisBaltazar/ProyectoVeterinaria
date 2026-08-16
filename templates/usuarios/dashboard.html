@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Inicio - CIAC{% endblock %}
+{% block content %}
+<h2>Bienvenido/a, {{ user.get_full_name|default:user.username }}</h2>
+<p class="text-muted">Rol: {{ perfil.get_rol_display }}</p>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Citas y atención</h5>
+                <p class="card-text">Gestiona la asignación de turnos y el flujo de pacientes.</p>
+                <a href="{% url 'citas:lista' %}" class="btn btn-primary">Ver citas</a>
+            </div>
+        </div>
+    </div>
+
+    {% if perfil.rol == "VET" %}
+    <div class="col-md-4">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h5 class="card-title text-secondary">Diagnóstico (IA)</h5>
+                <p class="card-text text-muted">Disponible en la Iteración 4 del proyecto.</p>
+                <button class="btn btn-outline-secondary" disabled>Próximamente</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

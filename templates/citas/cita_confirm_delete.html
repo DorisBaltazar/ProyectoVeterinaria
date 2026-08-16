@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Eliminar cita - CIAC{% endblock %}
+{% block content %}
+<h2>Eliminar cita</h2>
+<div class="alert alert-danger">
+    ¿Confirma que desea eliminar la cita de <strong>{{ object.mascota_nombre }}</strong>
+    programada para el {{ object.fecha|date:"d/m/Y" }} a las {{ object.hora|time:"H:i" }}?
+</div>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{% url 'citas:detalle' object.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+</form>
+{% endblock %}

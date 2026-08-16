@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Editar{% else %}Nueva{% endif %} cita - CIAC{% endblock %}
+{% block content %}
+<h2>{% if object %}Editar cita{% else %}Nueva cita{% endif %}</h2>
+<form method="post" class="row g-3 bg-white p-4 rounded shadow-sm">
+    {% csrf_token %}
+    <div class="col-md-6">
+        <label class="form-label">Nombre del propietario</label>
+        {{ form.propietario_nombre }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Teléfono</label>
+        {{ form.propietario_telefono }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Nombre de la mascota</label>
+        {{ form.mascota_nombre }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Especie</label>
+        {{ form.especie }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Fecha</label>
+        {{ form.fecha }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Hora</label>
+        {{ form.hora }}
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Motivo de consulta</label>
+        {{ form.motivo }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Veterinario asignado</label>
+        {{ form.veterinario }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Estado</label>
+        {{ form.estado }}
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Observaciones</label>
+        {{ form.observaciones }}
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'citas:lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

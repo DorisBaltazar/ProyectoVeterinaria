@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Citas - CIAC{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Citas y atención clínica</h2>
+    {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" %}
+    <a href="{% url 'citas:crear' %}" class="btn btn-success">+ Nueva cita</a>
+    {% endif %}
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="estado" class="form-select" onchange="this.form.submit()">
+            <option value="">Todos los estados</option>
+            {% for valor, etiqueta in estados %}
+                <option value="{{ valor }}" {% if request.GET.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<table class="table table-striped table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Mascota</th>
+            <th>Propietario</th>
+            <th>Motivo</th>
+            <th>Veterinario</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cita in citas %}
+        <tr>
+            <td>{{ cita.fecha|date:"d/m/Y" }}</td>
+            <td>{{ cita.hora|time:"H:i" }}</td>
+            <td>{{ cita.mascota_nombre }}</td>
+            <td>{{ cita.propietario_nombre }}</td>
+            <td>{{ cita.motivo }}</td>
+            <td>{{ cita.veterinario.get_full_name|default:"Sin asignar" }}</td>
+            <td>
+                <span class="badge
+                    {% if cita.estado == 'PENDIENTE' %}bg-warning text-dark
+                    {% elif cita.estado == 'CONFIRMADA' %}bg-info text-dark
+                    {% elif cita.estado == 'ATENDIDA' %}bg-success
+                    {% else %}bg-secondary{% endif %}">
+                    {{ cita.get_estado_display }}
+                </span>
+            </td>
+            <td>
+                <a href="{% url 'citas:detalle' cita.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted">No hay citas registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<nav>
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

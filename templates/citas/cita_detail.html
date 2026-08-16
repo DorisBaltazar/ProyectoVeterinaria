@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Detalle de cita - CIAC{% endblock %}
+{% block content %}
+<h2>Cita: {{ cita.mascota_nombre }}</h2>
+<div class="card bg-white">
+    <div class="card-body">
+        <p><strong>Propietario:</strong> {{ cita.propietario_nombre }} ({{ cita.propietario_telefono|default:"sin teléfono" }})</p>
+        <p><strong>Mascota:</strong> {{ cita.mascota_nombre }} - {{ cita.get_especie_display }}</p>
+        <p><strong>Fecha y hora:</strong> {{ cita.fecha|date:"d/m/Y" }} a las {{ cita.hora|time:"H:i" }}</p>
+        <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
+        <p><strong>Veterinario:</strong> {{ cita.veterinario.get_full_name|default:"Sin asignar" }}</p>
+        <p><strong>Estado:</strong> {{ cita.get_estado_display }}</p>
+        <p><strong>Observaciones:</strong> {{ cita.observaciones|default:"—" }}</p>
+
+        {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or perfil.rol == "VET" %}
+        <a href="{% url 'citas:editar' cita.pk %}" class="btn btn-warning">Editar</a>
+        {% endif %}
+        {% if perfil.rol == "ADMIN" %}
+        <a href="{% url 'citas:eliminar' cita.pk %}" class="btn btn-danger">Eliminar</a>
+        {% endif %}
+        <a href="{% url 'citas:lista' %}" class="btn btn-outline-secondary">Volver</a>
+    </div>
+</div>
+{% endblock %}
