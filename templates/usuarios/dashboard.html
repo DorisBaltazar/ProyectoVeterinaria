@@ -85,4 +85,32 @@
     </a>
     {% endif %}
 </div>
+
+{% if alertas_stock %}
+<div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 mt-6 mb-2">
+    <div class="flex items-center gap-2 mb-2">
+        <span class="material-symbols-outlined text-amber-600">warning</span>
+        <h3 class="font-headline font-bold text-amber-800">Alertas de inventario</h3>
+    </div>
+    <p class="text-sm text-amber-800 mb-2">{{ alertas_stock|length }} insumo{{ alertas_stock|length|pluralize }} por debajo del stock mínimo:</p>
+    <ul class="text-sm text-amber-900 list-disc list-inside">
+        {% for i in alertas_stock|slice:":5" %}
+        <li>{{ i.nombre }} — quedan {{ i.stock_actual }} {{ i.unidad_medida }} (mínimo {{ i.stock_minimo }})</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'inventario:lista' %}?alerta=1" class="text-amber-800 text-sm font-semibold hover:underline mt-2 inline-block">Ver inventario →</a>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+    {% if perfil.rol == "ADMIN" or perfil.rol == "VET" %}
+    <a href="{% url 'inventario:lista' %}" class="bg-white rounded-2xl p-6 hover:shadow-lg transition group">
+        <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-4 group-hover:bg-primary transition">
+            <span class="material-symbols-outlined text-primary group-hover:text-white">inventory_2</span>
+        </div>
+        <h3 class="font-headline font-bold text-lg mb-1">Inventario</h3>
+        <p class="text-sm text-secondary">Controla el stock de medicamentos e insumos.</p>
+    </a>
+    {% endif %}
+</div>
 {% endblock %}

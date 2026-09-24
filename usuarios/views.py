@@ -51,6 +51,11 @@ class DashboardView(RolRequeridoMixin, TemplateView):
         context["citas_hoy"] = citas_hoy
         context["total_citas_hoy"] = citas_hoy.count()
         context["proxima_cita"] = citas_hoy.filter(estado__in=["PENDIENTE", "CONFIRMADA"]).first()
+
+        if perfil and perfil.rol in ("ADMIN", "VET"):
+            from inventario.models import Insumo
+            context["alertas_stock"] = [i for i in Insumo.objects.filter(activo=True) if i.stock_bajo]
+
         return context
 
 

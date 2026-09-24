@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} insumo - Clínica CIAC{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-6">
+    {% if object %}Editar insumo{% else %}Registrar insumo{% endif %}
+</h2>
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
+    {% csrf_token %}
+    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre }}</div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Categoría</label>
+        {{ form.categoria }}
+    </div>
+    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.unidad_medida }}</div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Stock mínimo (para alertas)</label>
+        {{ form.stock_minimo }}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Precio unitario (opcional)</label>
+        {{ form.precio_unitario }}
+    </div>
+    {% if not object %}
+    <p class="text-xs text-secondary bg-teal-50 p-3 rounded-xl">
+        El insumo se crea con stock en 0. Después de guardarlo, registra una <strong>entrada</strong>
+        desde "Registrar movimiento" para cargar el stock inicial.
+    </p>
+    {% else %}
+    <label class="flex items-center gap-2 text-sm font-medium">{{ form.activo }} Insumo activo</label>
+    {% endif %}
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        <a href="{% url 'inventario:lista' %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

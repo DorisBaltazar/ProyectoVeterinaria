@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Receta digital - {{ historial.mascota.nombre }}{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="flex justify-end mb-4 print:hidden">
+        <button onclick="window.print()" class="bg-primary text-white px-5 py-2.5 rounded-xl font-medium text-sm inline-flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">print</span> Imprimir / Guardar PDF
+        </button>
+    </div>
+    <div class="bg-white rounded-2xl p-10 print:shadow-none print:rounded-none">
+        <div class="flex items-center gap-3 border-b border-surface-container-low pb-6 mb-6">
+            <div class="bg-primary p-3 rounded-xl">
+                <span class="material-symbols-outlined text-white" style="font-variation-settings:'FILL' 1;">pets</span>
+            </div>
+            <div>
+                <p class="font-headline text-xl font-extrabold text-primary">Clínica Veterinaria CIAC</p>
+                <p class="text-xs text-secondary">Receta médica digital</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+            <div><p class="text-outline text-xs uppercase font-bold">Paciente</p><p class="font-medium">{{ historial.mascota.nombre }} ({{ historial.mascota.codigo }})</p></div>
+            <div><p class="text-outline text-xs uppercase font-bold">Especie / Raza</p><p class="font-medium">{{ historial.mascota.get_especie_display }}{% if historial.mascota.raza %} · {{ historial.mascota.raza }}{% endif %}</p></div>
+            <div><p class="text-outline text-xs uppercase font-bold">Propietario</p><p class="font-medium">{{ historial.mascota.propietario.nombre_completo }}</p></div>
+            <div><p class="text-outline text-xs uppercase font-bold">Fecha</p><p class="font-medium">{{ historial.fecha_atencion|date:"d/m/Y" }}</p></div>
+        </div>
+
+        <div class="mb-6">
+            <p class="text-outline text-xs uppercase font-bold mb-1">Diagnóstico</p>
+            <p class="text-sm">{{ historial.diagnostico }}</p>
+        </div>
+
+        <div class="mb-8">
+            <p class="text-outline text-xs uppercase font-bold mb-2">Rp/ Medicamentos e indicaciones</p>
+            <div class="border border-surface-container-high rounded-xl p-4 text-sm whitespace-pre-line min-h-[100px]">
+                {{ historial.medicamentos|default:"Sin medicamentos recetados en esta consulta." }}
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end pt-10 border-t border-surface-container-low text-sm">
+            <div>
+                <p class="text-outline text-xs">Veterinario tratante</p>
+                <p class="font-medium border-t border-on-surface pt-1 mt-8">
+                    Dr(a). {{ historial.veterinario.get_full_name|default:historial.veterinario.username|default:"________________" }}
+                </p>
+            </div>
+            <p class="text-xs text-outline">Documento generado por el sistema CIAC el {% now "d/m/Y H:i" %}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

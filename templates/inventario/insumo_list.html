@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Inventario - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div>
+        <h2 class="font-headline text-2xl font-extrabold text-primary">Inventario</h2>
+        <p class="text-secondary text-sm">Stock de medicamentos, materiales y otros insumos.</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{% url 'inventario:movimientos' %}" class="bg-white px-5 py-3 rounded-xl font-medium text-sm text-secondary">Ver movimientos</a>
+        {% if perfil.rol == "ADMIN" or perfil.rol == "VET" %}
+        <a href="{% url 'inventario:movimiento_crear' %}" class="bg-teal-50 text-primary px-5 py-3 rounded-xl font-medium text-sm inline-flex items-center gap-1">
+            <span class="material-symbols-outlined text-lg">sync_alt</span> Registrar movimiento
+        </a>
+        {% endif %}
+        {% if perfil.rol == "ADMIN" %}
+        <a href="{% url 'inventario:crear' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-white font-bold px-5 py-3 rounded-xl shadow hover:scale-[1.02] transition w-fit">
+            <span class="material-symbols-outlined text-lg">add</span> Nuevo insumo
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<form method="get" class="flex flex-wrap gap-3 mb-6">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Buscar insumo..."
+           class="flex-1 min-w-[220px] bg-white rounded-xl px-4 py-3 border-none focus:ring-2 focus:ring-primary/20">
+    <label class="flex items-center gap-2 bg-white rounded-xl px-4 py-3 text-sm font-medium">
+        <input type="checkbox" name="alerta" value="1" {% if request.GET.alerta %}checked{% endif %} onchange="this.form.submit()">
+        Solo con stock bajo {% if total_alertas %}<span class="text-amber-600 font-bold">({{ total_alertas }})</span>{% endif %}
+    </label>
+</form>
+
+<div class="bg-white rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="text-left text-xs font-bold uppercase tracking-wider text-secondary bg-surface-container-low">
+                <th class="px-5 py-4">Insumo</th>
+                <th class="px-5 py-4">Categoría</th>
+                <th class="px-5 py-4">Stock actual</th>
+                <th class="px-5 py-4">Stock mínimo</th>
+                <th class="px-5 py-4"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in insumos %}
+            <tr class="border-t border-surface-container-low hover:bg-surface-container-low/50 transition">
+                <td class="px-5 py-4 font-medium">{{ i.nombre }}</td>
+                <td class="px-5 py-4">{{ i.get_categoria_display }}</td>
+                <td class="px-5 py-4">
+                    <span class="{% if i.stock_bajo %}text-amber-700 font-bold{% endif %}">{{ i.stock_actual }} {{ i.unidad_medida }}</span>
+                    {% if i.stock_bajo %}<span class="material-symbols-outlined text-amber-600 text-sm align-middle">warning</span>{% endif %}
+                </td>
+                <td class="px-5 py-4 text-outline">{{ i.stock_minimo }} {{ i.unidad_medida }}</td>
+                <td class="px-5 py-4">
+                    {% if perfil.rol == "ADMIN" %}
+                    <a href="{% url 'inventario:editar' i.pk %}" class="text-primary font-semibold hover:underline">Editar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center text-secondary py-10">No hay insumos registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<div class="flex items-center gap-2 mt-6">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 rounded-lg bg-white">Anterior</a>{% endif %}
+    <span class="px-3 py-2 text-sm text-secondary">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 rounded-lg bg-white">Siguiente</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

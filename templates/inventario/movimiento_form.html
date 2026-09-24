@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Registrar movimiento - Clínica CIAC{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-6">Registrar movimiento de inventario</h2>
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="bg-red-50 text-red-700 text-sm p-3 rounded-xl">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Insumo</label>
+        {{ form.insumo }}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tipo de movimiento</label>
+        {{ form.tipo }}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Cantidad</label>
+        {{ form.cantidad }}
+    </div>
+    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.motivo }}</div>
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        <a href="{% url 'inventario:movimientos' %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

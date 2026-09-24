@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Movimientos de inventario - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h2 class="font-headline text-2xl font-extrabold text-primary">Movimientos de inventario</h2>
+    <a href="{% url 'inventario:lista' %}" class="text-secondary text-sm font-medium">← Volver al inventario</a>
+</div>
+<div class="bg-white rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="text-left text-xs font-bold uppercase tracking-wider text-secondary bg-surface-container-low">
+                <th class="px-5 py-4">Fecha</th><th class="px-5 py-4">Insumo</th><th class="px-5 py-4">Tipo</th>
+                <th class="px-5 py-4">Cantidad</th><th class="px-5 py-4">Motivo</th><th class="px-5 py-4">Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in movimientos %}
+            <tr class="border-t border-surface-container-low">
+                <td class="px-5 py-4 whitespace-nowrap">{{ m.fecha|date:"d/m/Y H:i" }}</td>
+                <td class="px-5 py-4 font-medium">{{ m.insumo.nombre }}</td>
+                <td class="px-5 py-4">
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full {% if m.tipo == 'ENTRADA' %}bg-emerald-50 text-emerald-700{% else %}bg-red-50 text-red-700{% endif %}">
+                        {{ m.get_tipo_display }}
+                    </span>
+                </td>
+                <td class="px-5 py-4">{{ m.cantidad }} {{ m.insumo.unidad_medida }}</td>
+                <td class="px-5 py-4 text-secondary">{{ m.motivo }}</td>
+                <td class="px-5 py-4 text-outline">{{ m.usuario|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-secondary py-10">Sin movimientos registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% if is_paginated %}
+<div class="flex items-center gap-2 mt-6">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 rounded-lg bg-white">Anterior</a>{% endif %}
+    <span class="px-3 py-2 text-sm text-secondary">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 rounded-lg bg-white">Siguiente</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

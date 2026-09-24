@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Historial clínico de {{ mascota.nombre }} - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-4">
+        {% if mascota.foto %}
+            <img src="{{ mascota.foto.url }}" class="w-16 h-16 rounded-2xl object-cover">
+        {% else %}
+            <div class="w-16 h-16 rounded-2xl bg-teal-50 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-2xl">pets</span>
+            </div>
+        {% endif %}
+        <div>
+            <h2 class="font-headline text-2xl font-extrabold text-primary">Historial clínico — {{ mascota.nombre }}</h2>
+            <p class="text-secondary text-sm">{{ mascota.codigo }} · {{ mascota.propietario.nombre_completo }}</p>
+        </div>
+    </div>
+    {% if perfil.rol == "ADMIN" or perfil.rol == "VET" %}
+    <a href="{% url 'historiales:crear' mascota.pk %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-white font-bold px-5 py-3 rounded-xl shadow hover:scale-[1.02] transition w-fit">
+        <span class="material-symbols-outlined text-lg">add</span> Nueva consulta/control
+    </a>
+    {% endif %}
+</div>
+
+{% if not historiales %}
+<div class="bg-white rounded-2xl p-10 text-center text-secondary">
+    Todavía no hay consultas registradas para esta mascota.
+</div>
+{% else %}
+<!-- Línea de tiempo de evolución (RF-08) -->
+<div class="relative pl-8 space-y-6">
+    <div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-surface-container-high"></div>
+    {% for h in historiales %}
+    <div class="relative">
+        <div class="absolute -left-8 top-1 w-6 h-6 rounded-full flex items-center justify-center
+            {% if h.tipo_atencion == 'CONTROL' %}bg-sky-100{% else %}bg-primary{% endif %}">
+            <span class="material-symbols-outlined text-sm {% if h.tipo_atencion == 'CONTROL' %}text-sky-700{% else %}text-white{% endif %}">
+                {% if h.tipo_atencion == 'CONTROL' %}event_repeat{% else %}stethoscope{% endif %}
+            </span>
+        </div>
+        <a href="{% url 'historiales:detalle' h.pk %}" class="block bg-white rounded-2xl p-5 hover:shadow-lg transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider {% if h.tipo_atencion == 'CONTROL' %}text-sky-700{% else %}text-primary{% endif %}">
+                    {{ h.get_tipo_atencion_display }}
+                </span>
+                <span class="text-xs text-outline">{{ h.fecha_atencion|date:"d/m/Y H:i" }}</span>
+            </div>
+            <p class="font-medium text-sm">{{ h.motivo }}</p>
+            <p class="text-sm text-secondary mt-1 line-clamp-2">Dx: {{ h.diagnostico|truncatewords:20 }}</p>
+            <div class="flex items-center gap-4 mt-2 text-xs text-outline">
+                {% if h.veterinario %}<span>Dr(a). {{ h.veterinario.get_full_name|default:h.veterinario.username }}</span>{% endif %}
+                {% if h.peso_kg %}<span>{{ h.peso_kg }} kg</span>{% endif %}
+                {% if h.resultados_lab.count %}<span>{{ h.resultados_lab.count }} resultado{{ h.resultados_lab.count|pluralize }} de lab.</span>{% endif %}
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

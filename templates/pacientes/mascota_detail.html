@@ -35,6 +35,9 @@
     {% endif %}
 
     <div class="flex gap-3">
+        <a href="{% url 'historiales:timeline' mascota.pk %}" class="bg-teal-50 text-primary px-5 py-2.5 rounded-xl font-medium text-sm inline-flex items-center gap-1">
+            <span class="material-symbols-outlined text-lg">description</span> Historial clínico
+        </a>
         {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" %}
         <a href="{% url 'pacientes:editar' mascota.pk %}" class="bg-surface-container-highest px-5 py-2.5 rounded-xl font-medium text-sm">Editar</a>
         {% endif %}

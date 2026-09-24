@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Editar{% else %}Nueva{% endif %} consulta - Clínica CIAC{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-1">
+    {% if object %}Editar registro clínico{% else %}Nueva consulta / control{% endif %}
+</h2>
+<p class="text-secondary text-sm mb-6">Mascota: <strong>{{ mascota.nombre }}</strong> ({{ mascota.codigo }})</p>
+
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-3xl">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tipo de atención</label>
+            {{ form.tipo_atencion }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha y hora</label>
+            {{ form.fecha_atencion }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Veterinario</label>
+            {{ form.veterinario }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Consulta relacionada (si es un control)</label>
+            {{ form.consulta_relacionada }}
+        </div>
+    </div>
+
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Motivo</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.motivo }}</div>
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Síntomas observados</label>
+        {{ form.sintomas }}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Diagnóstico</label>
+        {{ form.diagnostico }}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tratamiento indicado</label>
+        {{ form.tratamiento }}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Medicamentos recetados</label>
+        {{ form.medicamentos }}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Peso (kg)</label>
+            {{ form.peso_kg }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Temperatura (°C)</label>
+            {{ form.temperatura_c }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Próximo control</label>
+            {{ form.fecha_proximo_control }}
+        </div>
+    </div>
+
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observaciones</label>
+        {{ form.observaciones }}
+    </div>
+
+    <div class="flex gap-3 pt-4">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        <a href="{% url 'historiales:timeline' mascota.pk %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

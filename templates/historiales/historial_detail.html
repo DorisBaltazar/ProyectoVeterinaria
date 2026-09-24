@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Consulta {{ historial.fecha_atencion|date:"d/m/Y" }} - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl p-6 md:p-8 max-w-3xl">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-primary">{{ historial.get_tipo_atencion_display }}</span>
+            <h2 class="font-headline text-2xl font-extrabold text-on-surface">{{ historial.mascota.nombre }}</h2>
+            <p class="text-secondary text-sm">{{ historial.fecha_atencion|date:"d/m/Y H:i" }} · Dr(a). {{ historial.veterinario.get_full_name|default:historial.veterinario.username|default:"Sin asignar" }}</p>
+        </div>
+        <a href="{% url 'historiales:receta' historial.pk %}" class="bg-teal-50 text-primary px-4 py-2.5 rounded-xl font-medium text-sm inline-flex items-center gap-1">
+            <span class="material-symbols-outlined text-lg">prescriptions</span> Receta digital
+        </a>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+        <div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Motivo</p><p class="font-medium">{{ historial.motivo }}</p></div>
+        <div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Síntomas</p><p class="font-medium whitespace-pre-line">{{ historial.sintomas }}</p></div>
+        <div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Diagnóstico</p><p class="font-medium whitespace-pre-line">{{ historial.diagnostico }}</p></div>
+        {% if historial.tratamiento %}<div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Tratamiento</p><p class="font-medium whitespace-pre-line">{{ historial.tratamiento }}</p></div>{% endif %}
+        {% if historial.medicamentos %}<div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Medicamentos</p><p class="font-medium whitespace-pre-line">{{ historial.medicamentos }}</p></div>{% endif %}
+        {% if historial.peso_kg %}<div><p class="text-outline text-xs uppercase font-bold">Peso</p><p class="font-medium">{{ historial.peso_kg }} kg</p></div>{% endif %}
+        {% if historial.temperatura_c %}<div><p class="text-outline text-xs uppercase font-bold">Temperatura</p><p class="font-medium">{{ historial.temperatura_c }} °C</p></div>{% endif %}
+        {% if historial.fecha_proximo_control %}<div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Próximo control sugerido</p><p class="font-medium">{{ historial.fecha_proximo_control|date:"d/m/Y" }}</p></div>{% endif %}
+        {% if historial.observaciones %}<div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Observaciones</p><p class="font-medium">{{ historial.observaciones }}</p></div>{% endif %}
+    </div>
+
+    <!-- Resultados de laboratorio (RF-05) -->
+    <div class="border-t border-surface-container-low pt-4 mb-4">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-headline font-bold">Resultados de laboratorio</h3>
+            {% if perfil.rol == "ADMIN" or perfil.rol == "VET" %}
+            <a href="{% url 'historiales:lab_crear' historial.pk %}" class="text-primary text-sm font-semibold hover:underline">+ Agregar resultado</a>
+            {% endif %}
+        </div>
+        {% if historial.resultados_lab.all %}
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-xs font-bold uppercase text-secondary">
+                    <th class="py-2">Variable</th><th class="py-2">Valor</th><th class="py-2">Referencia</th><th class="py-2">Obs.</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in historial.resultados_lab.all %}
+                <tr class="border-t border-surface-container-low">
+                    <td class="py-2">{{ r.nombre_variable }}</td>
+                    <td class="py-2">{{ r.valor }} {{ r.unidad }}</td>
+                    <td class="py-2 text-outline">{{ r.valor_referencia|default:"—" }}</td>
+                    <td class="py-2">{{ r.observacion|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-sm text-secondary">Sin resultados de laboratorio registrados.</p>
+        {% endif %}
+    </div>
+
+    <div class="flex gap-3">
+        {% if perfil.rol == "ADMIN" or perfil.rol == "VET" %}
+        <a href="{% url 'historiales:editar' historial.pk %}" class="bg-surface-container-highest px-5 py-2.5 rounded-xl font-medium text-sm">Editar</a>
+        {% endif %}
+        {% if perfil.rol == "ADMIN" %}
+        <a href="{% url 'historiales:eliminar' historial.pk %}" class="bg-red-50 text-red-700 px-5 py-2.5 rounded-xl font-medium text-sm">Eliminar</a>
+        {% endif %}
+        <a href="{% url 'historiales:timeline' historial.mascota.pk %}" class="px-5 py-2.5 rounded-xl font-medium text-sm text-secondary">Volver al historial</a>
+    </div>
+</div>
+{% endblock %}
