@@ -2,6 +2,8 @@ from django import forms
 
 from .models import Cita
 
+INPUT = "w-full bg-transparent border-none focus:ring-0 text-on-surface font-medium placeholder:text-slate-400"
+SELECT = "w-full bg-surface-container-highest border-none rounded-xl p-3 focus:ring-2 focus:ring-primary/20"
 
 class CitaForm(forms.ModelForm):
     class Meta:
@@ -19,14 +21,14 @@ class CitaForm(forms.ModelForm):
             "observaciones",
         ]
         widgets = {
-            "propietario_nombre": forms.TextInput(attrs={"class": "form-control"}),
-            "propietario_telefono": forms.TextInput(attrs={"class": "form-control"}),
-            "mascota_nombre": forms.TextInput(attrs={"class": "form-control"}),
-            "especie": forms.Select(attrs={"class": "form-select"}),
-            "fecha": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
-            "hora": forms.TimeInput(attrs={"class": "form-control", "type": "time"}),
-            "motivo": forms.TextInput(attrs={"class": "form-control"}),
-            "veterinario": forms.Select(attrs={"class": "form-select"}),
-            "estado": forms.Select(attrs={"class": "form-select"}),
-            "observaciones": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "propietario_nombre": forms.TextInput(attrs={"class": INPUT, "placeholder": "Nombre del propietario"}),
+            "propietario_telefono": forms.TextInput(attrs={"class": INPUT, "placeholder": "Teléfono"}),
+            "mascota_nombre": forms.TextInput(attrs={"class": INPUT, "placeholder": "Nombre de la mascota"}),
+            "especie": forms.Select(attrs={"class": SELECT}),
+            "fecha": forms.DateInput(attrs={"class": SELECT, "type": "date"}),
+            "hora": forms.TimeInput(attrs={"class": SELECT, "type": "time"}),
+            "motivo": forms.TextInput(attrs={"class": INPUT, "placeholder": "Motivo de consulta"}),
+            "veterinario": forms.Select(attrs={"class": SELECT}),
+            "estado": forms.Select(attrs={"class": SELECT}),
+            "observaciones": forms.Textarea(attrs={"class": SELECT, "rows": 3}),
         }

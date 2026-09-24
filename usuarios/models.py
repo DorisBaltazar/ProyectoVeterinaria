@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
+
 class Perfil(models.Model):
     """
     Extiende el modelo de usuario nativo de Django (auth.User) para
@@ -42,3 +42,27 @@ class Perfil(models.Model):
     @property
     def es_recepcionista(self):
         return self.rol == self.Rol.RECEPCIONISTA
+
+
+class Bitacora(models.Model):
+    """RF-12: registro de auditoría básico — quién hizo qué y cuándo.
+
+    Se usa tanto para trazabilidad general del sistema como para dejar
+    constancia de accesos/uso del Módulo de Aprendizaje Automático,
+    restringido por rol según el Alcance (3.4) del proyecto.
+    """
+
+    usuario = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="acciones_bitacora"
+    )
+    accion = models.CharField("Acción", max_length=150)
+    detalle = models.CharField("Detalle", max_length=255, blank=True)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Registro de bitácora"
+        verbose_name_plural = "Bitácora de acciones"
+        ordering = ["-fecha_hora"]
+
+    def __str__(self):
+        return f"[{self.fecha_hora:%d/%m/%Y %H:%M}] {self.usuario} - {self.accion}"

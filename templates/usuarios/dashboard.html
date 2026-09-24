@@ -1,30 +1,88 @@
 {% extends "base.html" %}
-{% block title %}Inicio - CIAC{% endblock %}
+{% block title %}Panel - Clínica CIAC{% endblock %}
 {% block content %}
-<h2>Bienvenido/a, {{ user.get_full_name|default:user.username }}</h2>
-<p class="text-muted">Rol: {{ perfil.get_rol_display }}</p>
+<!-- Hero -->
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary-container text-white p-8 mb-6">
+    <svg class="absolute -right-10 -bottom-10 w-56 h-56 opacity-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+        <path d="M4.5 12.5c-1.4 0-2.5 1.4-2.5 3s1.1 3 2.5 3 2.5-1.4 2.5-3-1.1-3-2.5-3zm4-6c-1.4 0-2.5 1.4-2.5 3s1.1 3 2.5 3 2.5-1.4 2.5-3-1.1-3-2.5-3zm7 0c-1.4 0-2.5 1.4-2.5 3s1.1 3 2.5 3 2.5-1.4 2.5-3-1.1-3-2.5-3zm4 6c-1.4 0-2.5 1.4-2.5 3s1.1 3 2.5 3 2.5-1.4 2.5-3-1.1-3-2.5-3zm-7.5 1c-3 0-6.5 3-6.5 6.5 0 2 1.8 3.5 4 3.5.9 0 1.7-.3 2.5-.3s1.6.3 2.5.3c2.2 0 4-1.5 4-3.5 0-3.5-3.5-6.5-6.5-6.5z"/>
+    </svg>
+    <h2 class="font-headline text-2xl md:text-3xl font-extrabold mb-2">Hola, {{ user.get_full_name|default:user.username }}</h2>
+    <p class="text-white/85 max-w-lg">Bienvenido al panel de Clínica CIAC. Rol activo: <strong>{{ perfil.get_rol_display }}</strong></p>
+</div>
 
-<div class="row mt-4">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Citas y atención</h5>
-                <p class="card-text">Gestiona la asignación de turnos y el flujo de pacientes.</p>
-                <a href="{% url 'citas:lista' %}" class="btn btn-primary">Ver citas</a>
-            </div>
-        </div>
+<!-- Recordatorio del día (RF-07 / HU-06) -->
+<div class="bg-white rounded-2xl p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="font-headline font-bold text-lg flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">today</span>
+            Recordatorio del día
+        </h3>
+        <a href="{% url 'citas:lista' %}" class="text-primary text-sm font-semibold hover:underline">Ver todas las citas</a>
     </div>
 
+    {% if total_citas_hoy == 0 %}
+        <p class="text-secondary text-sm">No tienes citas programadas para hoy.</p>
+    {% else %}
+        <p class="text-sm text-secondary mb-4">
+            Tienes <strong class="text-on-surface">{{ total_citas_hoy }}</strong> cita{{ total_citas_hoy|pluralize }} programada{{ total_citas_hoy|pluralize }} para hoy
+            {% if proxima_cita %}· próxima: <strong class="text-primary">{{ proxima_cita.hora|time:"H:i" }}</strong> con {{ proxima_cita.mascota_nombre }}{% endif %}
+        </p>
+        <div class="space-y-2">
+            {% for cita in citas_hoy|slice:":5" %}
+            <a href="{% url 'citas:detalle' cita.pk %}" class="flex items-center justify-between px-4 py-3 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary text-lg">pets</span>
+                    <div>
+                        <p class="font-medium text-sm">{{ cita.mascota_nombre }} <span class="text-outline">— {{ cita.motivo }}</span></p>
+                        <p class="text-xs text-secondary">{{ cita.propietario_nombre }}{% if cita.veterinario %} · Dr(a). {{ cita.veterinario.get_full_name|default:cita.veterinario.username }}{% endif %}</p>
+                    </div>
+                </div>
+                <span class="text-sm font-bold text-primary">{{ cita.hora|time:"H:i" }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <a href="{% url 'pacientes:lista' %}" class="bg-white rounded-2xl p-6 hover:shadow-lg transition group">
+        <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-4 group-hover:bg-primary transition">
+            <span class="material-symbols-outlined text-primary group-hover:text-white">pets</span>
+        </div>
+        <h3 class="font-headline font-bold text-lg mb-1">Mascotas</h3>
+        <p class="text-sm text-secondary">Registra propietarios y mascotas, con foto incluida.</p>
+    </a>
+    <a href="{% url 'citas:lista' %}" class="bg-white rounded-2xl p-6 hover:shadow-lg transition group">
+        <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-4 group-hover:bg-primary transition">
+            <span class="material-symbols-outlined text-primary group-hover:text-white">calendar_month</span>
+        </div>
+        <h3 class="font-headline font-bold text-lg mb-1">Citas y atención</h3>
+        <p class="text-sm text-secondary">Gestiona la asignación de turnos y el flujo de pacientes.</p>
+    </a>
     {% if perfil.rol == "VET" %}
-    <div class="col-md-4">
-        <div class="card border-secondary">
-            <div class="card-body">
-                <h5 class="card-title text-secondary">Diagnóstico (IA)</h5>
-                <p class="card-text text-muted">Disponible en la Iteración 4 del proyecto.</p>
-                <button class="btn btn-outline-secondary" disabled>Próximamente</button>
-            </div>
+    <div class="bg-surface-container-low rounded-2xl p-6 opacity-70">
+        <div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center mb-4">
+            <span class="material-symbols-outlined text-secondary">neurology</span>
         </div>
+        <h3 class="font-headline font-bold text-lg mb-1 text-secondary">Diagnóstico (IA)</h3>
+        <p class="text-sm text-secondary">Disponible en la próxima iteración del proyecto.</p>
     </div>
+    {% endif %}
+    {% if perfil.rol == "ADMIN" %}
+    <a href="{% url 'usuarios:usuarios_lista' %}" class="bg-white rounded-2xl p-6 hover:shadow-lg transition group">
+        <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-4 group-hover:bg-primary transition">
+            <span class="material-symbols-outlined text-primary group-hover:text-white">manage_accounts</span>
+        </div>
+        <h3 class="font-headline font-bold text-lg mb-1">Usuarios y roles</h3>
+        <p class="text-sm text-secondary">Crea usuarios del sistema y asígnales un rol.</p>
+    </a>
+    <a href="{% url 'usuarios:bitacora' %}" class="bg-white rounded-2xl p-6 hover:shadow-lg transition group">
+        <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-4 group-hover:bg-primary transition">
+            <span class="material-symbols-outlined text-primary group-hover:text-white">history</span>
+        </div>
+        <h3 class="font-headline font-bold text-lg mb-1">Bitácora de acciones</h3>
+        <p class="text-sm text-secondary">Consulta el registro de auditoría del sistema.</p>
+    </a>
     {% endif %}
 </div>
 {% endblock %}

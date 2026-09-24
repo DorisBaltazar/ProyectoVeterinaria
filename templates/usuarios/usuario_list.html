@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Usuarios - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div>
+        <h2 class="font-headline text-2xl font-extrabold text-primary">Usuarios y roles</h2>
+        <p class="text-secondary text-sm">Crea usuarios del sistema y asígnales un rol (Administrador, Veterinario, Recepcionista).</p>
+    </div>
+    <a href="{% url 'usuarios:usuario_crear' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-white font-bold px-5 py-3 rounded-xl shadow hover:scale-[1.02] transition w-fit">
+        <span class="material-symbols-outlined text-lg">person_add</span> Nuevo usuario
+    </a>
+</div>
+
+<div class="bg-white rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="text-left text-xs font-bold uppercase tracking-wider text-secondary bg-surface-container-low">
+                <th class="px-5 py-4">Usuario</th>
+                <th class="px-5 py-4">Nombre</th>
+                <th class="px-5 py-4">Correo</th>
+                <th class="px-5 py-4">Rol</th>
+                <th class="px-5 py-4">Estado</th>
+                <th class="px-5 py-4"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios_lista %}
+            <tr class="border-t border-surface-container-low hover:bg-surface-container-low/50 transition">
+                <td class="px-5 py-4 font-medium">{{ u.username }}</td>
+                <td class="px-5 py-4">{{ u.get_full_name|default:"—" }}</td>
+                <td class="px-5 py-4">{{ u.email|default:"—" }}</td>
+                <td class="px-5 py-4">
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-teal-50 text-primary">
+                        {{ u.perfil.get_rol_display|default:"Sin rol" }}
+                    </span>
+                </td>
+                <td class="px-5 py-4">
+                    {% if u.is_active %}
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">Activo</span>
+                    {% else %}
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-surface-container-high text-secondary">Inactivo</span>
+                    {% endif %}
+                </td>
+                <td class="px-5 py-4">
+                    <a href="{% url 'usuarios:usuario_editar' u.pk %}" class="text-primary font-semibold hover:underline">Editar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-secondary py-10">No hay usuarios registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<div class="flex items-center gap-2 mt-6">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 rounded-lg bg-white">Anterior</a>{% endif %}
+    <span class="px-3 py-2 text-sm text-secondary">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 rounded-lg bg-white">Siguiente</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

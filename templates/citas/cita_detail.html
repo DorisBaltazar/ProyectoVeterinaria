@@ -1,24 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Detalle de cita - CIAC{% endblock %}
+{% extends "base.html" %}
+{% block title %}Detalle de cita - Clínica CIAC{% endblock %}
 {% block content %}
-<h2>Cita: {{ cita.mascota_nombre }}</h2>
-<div class="card bg-white">
-    <div class="card-body">
-        <p><strong>Propietario:</strong> {{ cita.propietario_nombre }} ({{ cita.propietario_telefono|default:"sin teléfono" }})</p>
-        <p><strong>Mascota:</strong> {{ cita.mascota_nombre }} - {{ cita.get_especie_display }}</p>
-        <p><strong>Fecha y hora:</strong> {{ cita.fecha|date:"d/m/Y" }} a las {{ cita.hora|time:"H:i" }}</p>
-        <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
-        <p><strong>Veterinario:</strong> {{ cita.veterinario.get_full_name|default:"Sin asignar" }}</p>
-        <p><strong>Estado:</strong> {{ cita.get_estado_display }}</p>
-        <p><strong>Observaciones:</strong> {{ cita.observaciones|default:"—" }}</p>
-
+<div class="bg-white rounded-2xl p-6 md:p-8 max-w-2xl">
+    <h2 class="font-headline text-2xl font-extrabold text-primary mb-6">{{ cita.mascota_nombre }}</h2>
+    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+        <div><p class="text-outline text-xs uppercase font-bold">Propietario</p><p class="font-medium">{{ cita.propietario_nombre }} ({{ cita.propietario_telefono|default:"sin teléfono" }})</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Especie</p><p class="font-medium">{{ cita.get_especie_display }}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Fecha y hora</p><p class="font-medium">{{ cita.fecha|date:"d/m/Y" }} · {{ cita.hora|time:"H:i" }}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Veterinario</p><p class="font-medium">{{ cita.veterinario.get_full_name|default:"Sin asignar" }}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Estado</p><p class="font-medium">{{ cita.get_estado_display }}</p></div>
+        <div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Motivo</p><p class="font-medium">{{ cita.motivo }}</p></div>
+        {% if cita.observaciones %}<div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Observaciones</p><p class="font-medium">{{ cita.observaciones }}</p></div>{% endif %}
+    </div>
+    <div class="flex gap-3">
         {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or perfil.rol == "VET" %}
-        <a href="{% url 'citas:editar' cita.pk %}" class="btn btn-warning">Editar</a>
+        <a href="{% url 'citas:editar' cita.pk %}" class="bg-surface-container-highest px-5 py-2.5 rounded-xl font-medium text-sm">Editar</a>
         {% endif %}
         {% if perfil.rol == "ADMIN" %}
-        <a href="{% url 'citas:eliminar' cita.pk %}" class="btn btn-danger">Eliminar</a>
+        <a href="{% url 'citas:eliminar' cita.pk %}" class="bg-red-50 text-red-700 px-5 py-2.5 rounded-xl font-medium text-sm">Eliminar</a>
         {% endif %}
-        <a href="{% url 'citas:lista' %}" class="btn btn-outline-secondary">Volver</a>
+        <a href="{% url 'citas:lista' %}" class="px-5 py-2.5 rounded-xl font-medium text-sm text-secondary">Volver</a>
     </div>
 </div>
 {% endblock %}

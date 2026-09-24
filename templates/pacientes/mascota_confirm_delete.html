@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Eliminar mascota - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl p-6 md:p-8 max-w-lg">
+    <h2 class="font-headline text-xl font-extrabold text-primary mb-4">Eliminar mascota</h2>
+    <p class="text-sm text-on-surface mb-6">¿Confirmas que deseas eliminar a <strong>{{ object.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+    <form method="post" class="flex gap-3">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 text-white font-bold px-6 py-3 rounded-xl">Sí, eliminar</button>
+        <a href="{% url 'pacientes:detalle' object.pk %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

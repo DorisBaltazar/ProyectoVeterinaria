@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Mascotas - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div>
+        <h2 class="font-headline text-2xl font-extrabold text-primary">Gestión de Mascotas</h2>
+        <p class="text-secondary text-sm">Administra la base de propietarios y sus mascotas.</p>
+    </div>
+    {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" %}
+    <a href="{% url 'pacientes:crear' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-white font-bold px-5 py-3 rounded-xl shadow hover:scale-[1.02] transition w-fit">
+        <span class="material-symbols-outlined text-lg">person_add</span> Registrar propietario / mascota
+    </a>
+    {% endif %}
+</div>
+
+<form method="get" class="flex flex-wrap gap-3 mb-6">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Buscar por nombre, código o CI del propietario..."
+           class="flex-1 min-w-[220px] bg-white rounded-xl px-4 py-3 border-none focus:ring-2 focus:ring-primary/20">
+    <select name="especie" onchange="this.form.submit()" class="bg-white rounded-xl px-4 py-3 border-none focus:ring-2 focus:ring-primary/20">
+        <option value="">Todas las especies</option>
+        {% for valor, etiqueta in especies %}
+            <option value="{{ valor }}" {% if request.GET.especie == valor %}selected{% endif %}>{{ etiqueta }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="bg-surface-container-high px-4 py-3 rounded-xl font-medium">Buscar</button>
+</form>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for mascota in mascotas %}
+    <a href="{% url 'pacientes:detalle' mascota.pk %}" class="bg-white rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg transition">
+        {% if mascota.foto %}
+            <img src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}" class="w-16 h-16 rounded-2xl object-cover shrink-0">
+        {% else %}
+            <div class="w-16 h-16 rounded-2xl bg-teal-50 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary text-3xl">pets</span>
+            </div>
+        {% endif %}
+        <div class="min-w-0">
+            <div class="flex items-center gap-2">
+                <p class="font-headline font-bold text-on-surface truncate">{{ mascota.nombre }}</p>
+                <span class="text-[10px] font-mono font-bold text-outline bg-surface-container-low px-1.5 py-0.5 rounded">{{ mascota.codigo }}</span>
+            </div>
+            <p class="text-xs text-secondary">{{ mascota.get_especie_display }}{% if mascota.raza %} · {{ mascota.raza }}{% endif %}</p>
+            <p class="text-xs text-outline truncate mt-1">Dueño: {{ mascota.propietario.nombre_completo }} · CI {{ mascota.propietario.ci }}</p>
+        </div>
+    </a>
+    {% empty %}
+    <div class="col-span-full text-center text-secondary py-12">No hay mascotas registradas todavía.</div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<div class="flex items-center gap-2 mt-6">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 rounded-lg bg-white">Anterior</a>
+    {% endif %}
+    <span class="px-3 py-2 text-sm text-secondary">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 rounded-lg bg-white">Siguiente</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

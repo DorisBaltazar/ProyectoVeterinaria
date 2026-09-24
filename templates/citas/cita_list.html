@@ -1,76 +1,73 @@
 {% extends "base.html" %}
-{% block title %}Citas - CIAC{% endblock %}
+{% block title %}Citas - Clínica CIAC{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Citas y atención clínica</h2>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div>
+        <h2 class="font-headline text-2xl font-extrabold text-primary">Citas y atención clínica</h2>
+        <p class="text-secondary text-sm">Centraliza la asignación de turnos y el flujo de pacientes.</p>
+    </div>
     {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" %}
-    <a href="{% url 'citas:crear' %}" class="btn btn-success">+ Nueva cita</a>
+    <a href="{% url 'citas:crear' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-white font-bold px-5 py-3 rounded-xl shadow hover:scale-[1.02] transition w-fit">
+        <span class="material-symbols-outlined text-lg">add</span> Nueva cita
+    </a>
     {% endif %}
 </div>
 
-<form method="get" class="row g-2 mb-3">
-    <div class="col-auto">
-        <select name="estado" class="form-select" onchange="this.form.submit()">
-            <option value="">Todos los estados</option>
-            {% for valor, etiqueta in estados %}
-                <option value="{{ valor }}" {% if request.GET.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
-            {% endfor %}
-        </select>
-    </div>
+<form method="get" class="mb-6">
+    <select name="estado" onchange="this.form.submit()" class="bg-white rounded-xl px-4 py-3 border-none focus:ring-2 focus:ring-primary/20">
+        <option value="">Todos los estados</option>
+        {% for valor, etiqueta in estados %}
+            <option value="{{ valor }}" {% if request.GET.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+        {% endfor %}
+    </select>
 </form>
 
-<table class="table table-striped table-hover bg-white">
-    <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Mascota</th>
-            <th>Propietario</th>
-            <th>Motivo</th>
-            <th>Veterinario</th>
-            <th>Estado</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for cita in citas %}
-        <tr>
-            <td>{{ cita.fecha|date:"d/m/Y" }}</td>
-            <td>{{ cita.hora|time:"H:i" }}</td>
-            <td>{{ cita.mascota_nombre }}</td>
-            <td>{{ cita.propietario_nombre }}</td>
-            <td>{{ cita.motivo }}</td>
-            <td>{{ cita.veterinario.get_full_name|default:"Sin asignar" }}</td>
-            <td>
-                <span class="badge
-                    {% if cita.estado == 'PENDIENTE' %}bg-warning text-dark
-                    {% elif cita.estado == 'CONFIRMADA' %}bg-info text-dark
-                    {% elif cita.estado == 'ATENDIDA' %}bg-success
-                    {% else %}bg-secondary{% endif %}">
-                    {{ cita.get_estado_display }}
-                </span>
-            </td>
-            <td>
-                <a href="{% url 'citas:detalle' cita.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="8" class="text-center text-muted">No hay citas registradas.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="bg-white rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="text-left text-xs font-bold uppercase tracking-wider text-secondary bg-surface-container-low">
+                <th class="px-5 py-4">Fecha</th>
+                <th class="px-5 py-4">Mascota</th>
+                <th class="px-5 py-4">Propietario</th>
+                <th class="px-5 py-4">Motivo</th>
+                <th class="px-5 py-4">Veterinario</th>
+                <th class="px-5 py-4">Estado</th>
+                <th class="px-5 py-4"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr class="border-t border-surface-container-low hover:bg-surface-container-low/50 transition">
+                <td class="px-5 py-4">{{ cita.fecha|date:"d/m/Y" }} <span class="text-outline">{{ cita.hora|time:"H:i" }}</span></td>
+                <td class="px-5 py-4 font-medium">{{ cita.mascota_nombre }}</td>
+                <td class="px-5 py-4">{{ cita.propietario_nombre }}</td>
+                <td class="px-5 py-4">{{ cita.motivo }}</td>
+                <td class="px-5 py-4">{{ cita.veterinario.get_full_name|default:"Sin asignar" }}</td>
+                <td class="px-5 py-4">
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full
+                        {% if cita.estado == 'PENDIENTE' %}bg-amber-50 text-amber-700
+                        {% elif cita.estado == 'CONFIRMADA' %}bg-sky-50 text-sky-700
+                        {% elif cita.estado == 'ATENDIDA' %}bg-emerald-50 text-emerald-700
+                        {% else %}bg-surface-container-high text-secondary{% endif %}">
+                        {{ cita.get_estado_display }}
+                    </span>
+                </td>
+                <td class="px-5 py-4">
+                    <a href="{% url 'citas:detalle' cita.pk %}" class="text-primary font-semibold hover:underline">Ver</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" class="text-center text-secondary py-10">No hay citas registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% if is_paginated %}
-<nav>
-  <ul class="pagination">
-    {% if page_obj.has_previous %}
-      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
-    {% endif %}
-    <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
-    {% if page_obj.has_next %}
-      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
-    {% endif %}
-  </ul>
-</nav>
+<div class="flex items-center gap-2 mt-6">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 rounded-lg bg-white">Anterior</a>{% endif %}
+    <span class="px-3 py-2 text-sm text-secondary">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 rounded-lg bg-white">Siguiente</a>{% endif %}
+</div>
 {% endif %}
 {% endblock %}

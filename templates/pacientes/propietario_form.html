@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} propietario - Clínica CIAC{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-6">
+    {% if object %}Editar propietario{% else %}Registrar propietario{% endif %}
+</h2>
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
+    {% csrf_token %}
+    <div>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.ci }}</div>
+        {% if form.ci.errors %}<p class="text-error text-sm mt-1">{{ form.ci.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre_completo }}</div>
+    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.telefono }}</div>
+    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.correo }}</div>
+    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.direccion }}</div>
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        {% if object %}
+            <a href="{% url 'pacientes:propietarios' %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Volver a propietarios</a>
+        {% else %}
+            <a href="{% url 'pacientes:crear' %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Ir a registrar mascota</a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

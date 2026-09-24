@@ -1,52 +1,55 @@
 {% extends "base.html" %}
-{% block title %}{% if object %}Editar{% else %}Nueva{% endif %} cita - CIAC{% endblock %}
+{% block title %}{% if object %}Editar{% else %}Nueva{% endif %} cita - Clínica CIAC{% endblock %}
 {% block content %}
-<h2>{% if object %}Editar cita{% else %}Nueva cita{% endif %}</h2>
-<form method="post" class="row g-3 bg-white p-4 rounded shadow-sm">
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-6">{% if object %}Editar cita{% else %}Nueva cita{% endif %}</h2>
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 max-w-3xl">
     {% csrf_token %}
-    <div class="col-md-6">
-        <label class="form-label">Nombre del propietario</label>
-        {{ form.propietario_nombre }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre del propietario</label>
+            <div class="bg-surface-container-highest rounded-xl p-1">{{ form.propietario_nombre }}</div>
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Teléfono</label>
+            <div class="bg-surface-container-highest rounded-xl p-1">{{ form.propietario_telefono }}</div>
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre de la mascota</label>
+            <div class="bg-surface-container-highest rounded-xl p-1">{{ form.mascota_nombre }}</div>
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Especie</label>
+            {{ form.especie }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha</label>
+            {{ form.fecha }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Hora</label>
+            {{ form.hora }}
+        </div>
+        <div class="md:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Motivo de consulta</label>
+            <div class="bg-surface-container-highest rounded-xl p-1">{{ form.motivo }}</div>
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Veterinario asignado</label>
+            {{ form.veterinario }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Estado</label>
+            {{ form.estado }}
+        </div>
+        <div class="md:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observaciones</label>
+            {{ form.observaciones }}
+        </div>
     </div>
-    <div class="col-md-6">
-        <label class="form-label">Teléfono</label>
-        {{ form.propietario_telefono }}
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Nombre de la mascota</label>
-        {{ form.mascota_nombre }}
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Especie</label>
-        {{ form.especie }}
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Fecha</label>
-        {{ form.fecha }}
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Hora</label>
-        {{ form.hora }}
-    </div>
-    <div class="col-md-12">
-        <label class="form-label">Motivo de consulta</label>
-        {{ form.motivo }}
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Veterinario asignado</label>
-        {{ form.veterinario }}
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Estado</label>
-        {{ form.estado }}
-    </div>
-    <div class="col-md-12">
-        <label class="form-label">Observaciones</label>
-        {{ form.observaciones }}
-    </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="{% url 'citas:lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+    <div class="flex gap-3 pt-6">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        <a href="{% url 'citas:lista' %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
     </div>
 </form>
 {% endblock %}
+

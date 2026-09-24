@@ -1,28 +1,56 @@
 {% extends "base.html" %}
-{% block title %}Iniciar sesión - CIAC{% endblock %}
-{% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title text-center mb-4">🐾 CIAC Veterinaria</h3>
-                {% if form.errors %}
-                    <div class="alert alert-danger">Usuario o contraseña incorrectos.</div>
-                {% endif %}
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">Usuario</label>
-                        {{ form.username }}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Contraseña</label>
-                        {{ form.password }}
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-                </form>
+{% block title %}Acceso al Sistema | Clínica CIAC{% endblock %}
+{% block content_public %}
+<main class="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-primary via-primary-container to-teal-400">
+    <!-- Fondo decorativo: patrón de huellas + siluetas de mascota (SVG propio, sin fotos externas) -->
+    <svg class="absolute inset-0 w-full h-full opacity-[0.10]" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <pattern id="huellas" x="0" y="0" width="140" height="140" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+                <path d="M20 10c-3 0-5 3-5 6s2 6 5 6 5-3 5-6-2-6-5-6zM32 6c-2.5 0-4.5 2.5-4.5 5.5S29.5 17 32 17s4.5-2.5 4.5-5.5S34.5 6 32 6zM10 20c-2.5 0-4.5 2.5-4.5 5.5S7.5 31 10 31s4.5-2.5 4.5-5.5S12.5 20 10 20zM40 20c-2.5 0-4.5 2.5-4.5 5.5S37.5 31 40 31s4.5-2.5 4.5-5.5S42.5 20 40 20zM25 24c-6 0-13 6-13 13s6 10 13 10 13-3 13-10-7-13-13-13z" fill="white"/>
+            </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#huellas)"/>
+    </svg>
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-tertiary-fixed/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+
+    <!-- Tarjeta de login (glassmorphism) -->
+    <div class="relative z-10 w-full max-w-md">
+        <div class="bg-white/80 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 shadow-2xl shadow-primary/20 border border-white/40">
+            <div class="flex flex-col items-center mb-8">
+                <div class="mb-5 flex items-center justify-center bg-primary p-4 rounded-2xl shadow-lg transform -rotate-3">
+                    <span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings:'FILL' 1;">pets</span>
+                </div>
+                <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary mb-1">Clínica CIAC</h1>
+                <p class="font-headline text-sm font-semibold text-secondary uppercase tracking-widest">Acceso al Sistema</p>
             </div>
+
+            {% if form.errors %}
+                <div class="mb-5 px-4 py-3 rounded-xl bg-red-50 text-red-700 text-sm font-medium text-center">
+                    Usuario o contraseña incorrectos.
+                </div>
+            {% endif %}
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="flex items-center bg-surface-container-highest rounded-xl p-1 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20">
+                    <div class="flex items-center justify-center w-12 h-12 text-secondary">
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                    {{ form.username }}
+                </div>
+                <div class="flex items-center bg-surface-container-highest rounded-xl p-1 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20">
+                    <div class="flex items-center justify-center w-12 h-12 text-secondary">
+                        <span class="material-symbols-outlined">lock</span>
+                    </div>
+                    {{ form.password }}
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-4 rounded-xl shadow-lg hover:scale-[1.02] transition flex items-center justify-center gap-2">
+                    Entrar <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                </button>
+            </form>
         </div>
+        <p class="text-center text-white/70 text-xs mt-6">© 2026 Clínica CIAC — Excelencia Veterinaria</p>
     </div>
-</div>
+</main>
 {% endblock %}

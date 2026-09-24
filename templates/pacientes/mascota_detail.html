@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ mascota.nombre }} - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl p-6 md:p-8 max-w-2xl">
+    <div class="flex items-center gap-5 mb-6">
+        {% if mascota.foto %}
+            <img src="{{ mascota.foto.url }}" alt="{{ mascota.nombre }}" class="w-24 h-24 rounded-2xl object-cover">
+        {% else %}
+            <div class="w-24 h-24 rounded-2xl bg-teal-50 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-4xl">pets</span>
+            </div>
+        {% endif %}
+        <div>
+            <div class="flex items-center gap-2">
+                <h2 class="font-headline text-2xl font-extrabold text-on-surface">{{ mascota.nombre }}</h2>
+                <span class="text-xs font-mono font-bold text-outline bg-surface-container-low px-2 py-1 rounded">{{ mascota.codigo }}</span>
+            </div>
+            <p class="text-secondary text-sm">{{ mascota.get_especie_display }}{% if mascota.raza %} · {{ mascota.raza }}{% endif %} · {{ mascota.get_sexo_display }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+        <div><p class="text-outline text-xs uppercase font-bold">Propietario</p><p class="font-medium">{{ mascota.propietario.nombre_completo }}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">CI del propietario</p><p class="font-medium font-mono">{{ mascota.propietario.ci }}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Teléfono</p><p class="font-medium">{{ mascota.propietario.telefono }}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Edad aproximada</p><p class="font-medium">{% if mascota.edad_aproximada %}{{ mascota.edad_aproximada }} años{% else %}—{% endif %}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Peso</p><p class="font-medium">{% if mascota.peso_kg %}{{ mascota.peso_kg }} kg{% else %}—{% endif %}</p></div>
+    </div>
+
+    {% if mascota.notas %}
+    <div class="mb-6">
+        <p class="text-outline text-xs uppercase font-bold mb-1">Notas</p>
+        <p class="text-sm">{{ mascota.notas }}</p>
+    </div>
+    {% endif %}
+
+    <div class="flex gap-3">
+        {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" %}
+        <a href="{% url 'pacientes:editar' mascota.pk %}" class="bg-surface-container-highest px-5 py-2.5 rounded-xl font-medium text-sm">Editar</a>
+        {% endif %}
+        {% if perfil.rol == "ADMIN" %}
+        <a href="{% url 'pacientes:eliminar' mascota.pk %}" class="bg-red-50 text-red-700 px-5 py-2.5 rounded-xl font-medium text-sm">Eliminar</a>
+        {% endif %}
+        <a href="{% url 'pacientes:lista' %}" class="px-5 py-2.5 rounded-xl font-medium text-sm text-secondary">Volver</a>
+    </div>
+</div>
+{% endblock %}

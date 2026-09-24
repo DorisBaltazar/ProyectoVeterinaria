@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
+from usuarios.bitacora import registrar_bitacora
 from usuarios.mixins import RolRequeridoMixin
 
 from .forms import CitaForm
@@ -54,8 +55,10 @@ class CitaCreateView(RolRequeridoMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.creado_por = self.request.user
+        response = super().form_valid(form)
+        registrar_bitacora(self.request.user, "Registró cita", str(self.object))
         messages.success(self.request, "Cita registrada correctamente.")
-        return super().form_valid(form)
+        return response
 
 
 class CitaUpdateView(RolRequeridoMixin, UpdateView):
@@ -65,8 +68,10 @@ class CitaUpdateView(RolRequeridoMixin, UpdateView):
     template_name = "citas/cita_form.html"
 
     def form_valid(self, form):
+        response = super().form_valid(form)
+        registrar_bitacora(self.request.user, "Actualizó cita", str(self.object))
         messages.success(self.request, "Cita actualizada correctamente.")
-        return super().form_valid(form)
+        return response
 
 
 class CitaDeleteView(RolRequeridoMixin, DeleteView):
@@ -76,5 +81,6 @@ class CitaDeleteView(RolRequeridoMixin, DeleteView):
     success_url = reverse_lazy("citas:lista")
 
     def form_valid(self, form):
+        registrar_bitacora(self.request.user, "Eliminó cita", str(self.object))
         messages.success(self.request, "Cita eliminada.")
         return super().form_valid(form)

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} usuario - Clínica CIAC{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-6">
+    {% if object %}Editar usuario: {{ object.username }}{% else %}Registrar nuevo usuario{% endif %}
+</h2>
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
+    {% csrf_token %}
+
+    {% if not object %}
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Usuario (para iniciar sesión)</label>
+        {{ form.username }}
+        {% if form.username.errors %}<p class="text-error text-sm mt-1">{{ form.username.errors.0 }}</p>{% endif %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombres</label>
+            {{ form.first_name }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Apellidos</label>
+            {{ form.last_name }}
+        </div>
+    </div>
+
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Correo electrónico</label>
+        {{ form.email }}
+    </div>
+
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Rol</label>
+        {{ form.rol }}
+    </div>
+
+    {% if not object %}
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Contraseña</label>
+            {{ form.password1 }}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Confirmar contraseña</label>
+            {{ form.password2 }}
+        </div>
+        {% if form.password2.errors %}<p class="text-error text-sm col-span-2">{{ form.password2.errors.0 }}</p>{% endif %}
+    </div>
+    {% else %}
+    <label class="flex items-center gap-2 text-sm font-medium">
+        {{ form.is_active }} Usuario activo (puede iniciar sesión)
+    </label>
+    {% endif %}
+
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        <a href="{% url 'usuarios:usuarios_lista' %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
