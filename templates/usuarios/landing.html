@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clínica CIAC — Excelencia Veterinaria</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: "#004242",
+          "primary-container": "#005b5c",
+          "tertiary-fixed": "#7df5f5",
+          surface: "#f7faf9",
+          "surface-container": "#eef3f2",
+          "on-surface": "#1b1f1e",
+        },
+        fontFamily: {
+          headline: ["Manrope", "sans-serif"],
+          sans: ["Inter", "sans-serif"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: "Inter", sans-serif; background: #fff; }
+  h1, h2, h3, .font-headline { font-family: "Manrope", sans-serif; }
+</style>
+</head>
+<body class="text-on-surface">
+
+<!-- NAV -->
+<header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-surface-container">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <a href="{% url 'usuarios:landing' %}" class="font-headline font-extrabold text-xl text-primary">Clínica CIAC</a>
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface/80">
+      <a href="#inicio" class="text-primary border-b-2 border-primary pb-1">Inicio</a>
+      <a href="#servicios" class="hover:text-primary transition">Servicios</a>
+      <a href="#porque" class="hover:text-primary transition">Por qué elegirnos</a>
+      <a href="#contacto" class="hover:text-primary transition">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="inicio" class="max-w-7xl mx-auto px-6 pt-16 pb-20 grid md:grid-cols-2 gap-12 items-center">
+  <div>
+    <span class="inline-block bg-surface-container text-primary text-xs font-bold tracking-wider px-3 py-1.5 rounded-full">EXCELENCIA MÉDICA</span>
+    <h1 class="font-headline font-extrabold text-5xl leading-[1.08] mt-5 text-on-surface">
+      Excelencia<br>Veterinaria<br><span class="text-primary">en sus Manos</span>
+    </h1>
+    <p class="mt-6 text-base text-on-surface/70 max-w-md leading-relaxed">
+      Combinamos un expediente clínico digital centralizado y un cuidado profundamente humano para garantizar el bienestar de quienes más amas.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-4">
+      <a href="{% url 'usuarios:login' %}" class="inline-flex items-center gap-2 bg-primary text-white font-semibold px-6 py-3.5 rounded-full hover:bg-primary-container transition">
+        Iniciar Sesión
+        <span class="material-symbols-outlined text-base">login</span>
+      </a>
+      <a href="#servicios" class="inline-flex items-center gap-2 bg-white border border-surface-container text-on-surface font-semibold px-6 py-3.5 rounded-full hover:bg-surface-container transition">
+        Nuestros Servicios
+      </a>
+    </div>
+  </div>
+  <div class="relative">
+    <div class="rounded-3xl overflow-hidden shadow-xl aspect-[4/3] bg-gradient-to-br from-primary to-primary-container">
+      <img src="{% static 'usuarios/img/hero-clinica.jpg' %}" alt="Clínica Veterinaria CIAC" class="w-full h-full object-cover">
+    </div>
+    <div class="absolute -bottom-6 left-6 bg-white rounded-2xl shadow-lg px-5 py-4 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-tertiary-fixed/40 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">verified</span>
+      </div>
+      <div>
+        <p class="font-semibold text-sm">Historial clínico digital</p>
+        <p class="text-xs text-on-surface/60">Un expediente único por mascota</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPROMETIDOS -->
+<section class="bg-surface-container/60 py-20">
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+    <div>
+      <h2 class="font-headline font-extrabold text-3xl text-on-surface">Comprometidos con la Vida</h2>
+      <p class="mt-5 text-on-surface/70 leading-relaxed max-w-md">
+        En Clínica CIAC digitalizamos cada consulta, mascota y tratamiento para que nuestro equipo dedique su tiempo a lo que importa: el bienestar de tu compañero, no al papeleo.
+      </p>
+      <div class="mt-6 w-12 h-1 bg-primary rounded-full"></div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <span class="material-symbols-outlined text-primary text-2xl">trending_up</span>
+        <h3 class="font-headline font-bold mt-3">Trazabilidad</h3>
+        <p class="text-sm text-on-surface/60 mt-1">Historial clínico único y consultable por paciente, sin registros duplicados.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <span class="material-symbols-outlined text-primary text-2xl">science</span>
+        <h3 class="font-headline font-bold mt-3">Precisión</h3>
+        <p class="text-sm text-on-surface/60 mt-1">Resultados de laboratorio y controles registrados como datos estructurados.</p>
+      </div>
+      <div class="bg-primary text-white rounded-2xl p-6 shadow-sm col-span-2">
+        <span class="material-symbols-outlined text-tertiary-fixed text-2xl">pets</span>
+        <h3 class="font-headline font-bold mt-3">Cuidado Empático</h3>
+        <p class="text-sm text-white/80 mt-1">Entendemos que tu mascota es un miembro más de la familia — el trato humano es nuestra prioridad.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section id="servicios" class="py-20">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-xl mx-auto">
+      <h2 class="font-headline font-extrabold text-3xl">Servicios de Alta Precisión</h2>
+      <p class="mt-3 text-on-surface/60">Un flujo de atención completo, desde el registro de tu mascota hasta el seguimiento de su tratamiento.</p>
+    </div>
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {% for s in servicios %}
+      <div class="bg-white border border-surface-container rounded-2xl p-6 hover:shadow-lg transition">
+        <div class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary">{{ s.icono }}</span>
+        </div>
+        <h3 class="font-headline font-bold mt-4">{{ s.titulo }}</h3>
+        <p class="text-sm text-on-surface/60 mt-2 leading-relaxed">{{ s.descripcion }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- POR QUÉ ELEGIR -->
+<section id="porque" class="bg-primary text-white py-20">
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+    <div>
+      <h2 class="font-headline font-extrabold text-3xl">¿Por qué elegir Clínica CIAC?</h2>
+      <div class="mt-8 space-y-6">
+        <div class="flex gap-4">
+          <span class="material-symbols-outlined text-tertiary-fixed">folder_shared</span>
+          <div>
+            <h3 class="font-headline font-bold">Historial digital unificado</h3>
+            <p class="text-sm text-white/70 mt-1">Accede a toda la información clínica de tu mascota en un solo lugar.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <span class="material-symbols-outlined text-tertiary-fixed">event_available</span>
+          <div>
+            <h3 class="font-headline font-bold">Citas organizadas</h3>
+            <p class="text-sm text-white/70 mt-1">Agenda centralizada que elimina esperas innecesarias y turnos duplicados.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <span class="material-symbols-outlined text-tertiary-fixed">inventory_2</span>
+          <div>
+            <h3 class="font-headline font-bold">Control de insumos en tiempo real</h3>
+            <p class="text-sm text-white/70 mt-1">Alertas automáticas de stock mínimo para nunca interrumpir un tratamiento.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white/10 rounded-3xl p-8 border border-white/15">
+      <div class="bg-white rounded-2xl p-5 shadow-xl">
+        <div class="flex items-center gap-2 border-b border-surface-container pb-3 mb-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-green-400"></span>
+          <span class="ml-auto text-xs text-on-surface/40">Panel — Clínica CIAC</span>
+        </div>
+        <p class="text-xs font-semibold text-primary mb-2">Citas de hoy</p>
+        <div class="space-y-2">
+          <div class="h-3 bg-surface-container rounded-full w-full"></div>
+          <div class="h-3 bg-surface-container rounded-full w-5/6"></div>
+          <div class="h-3 bg-tertiary-fixed/40 rounded-full w-2/3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto" class="py-20">
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10">
+    <div class="bg-surface-container/60 rounded-3xl p-8">
+      <h2 class="font-headline font-extrabold text-2xl">Hablemos de tu mascota</h2>
+      <div class="mt-6 space-y-5 text-sm">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-primary">location_on</span>
+          <div><p class="text-xs text-on-surface/50 uppercase tracking-wide">Dirección</p><p class="font-medium">{{ direccion }}</p></div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-primary">call</span>
+          <div><p class="text-xs text-on-surface/50 uppercase tracking-wide">Teléfono</p><p class="font-medium">{{ telefono }}</p></div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-primary">mail</span>
+          <div><p class="text-xs text-on-surface/50 uppercase tracking-wide">Email</p><p class="font-medium">{{ correo }}</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-3xl overflow-hidden min-h-[220px]">
+      <iframe
+        src="https://www.google.com/maps?q=Veterinaria+CIAC,+Vinto,+Cochabamba,+Bolivia&z=18&output=embed"
+        class="w-full h-full min-h-[220px] border-0"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Ubicación de Clínica CIAC en Google Maps">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-surface-container py-8">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <p class="font-headline font-bold text-primary">Clínica CIAC</p>
+    <p class="text-xs text-on-surface/50">© {% now "Y" %} Clínica CIAC — Excelencia Veterinaria. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" />
+<style>.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:24px;}</style>
+</body>
+</html>

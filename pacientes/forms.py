@@ -75,6 +75,10 @@ class MascotaForm(forms.ModelForm):
                 "class": "w-full bg-surface-container-highest border-none rounded-xl p-3 focus:ring-2 focus:ring-primary/20",
                 "step": "0.01", "placeholder": "Peso en kg",
             }),
+            "foto": forms.FileInput(attrs={
+                "class": "hidden",
+                "accept": "image/png, image/jpeg",
+            }),
             "notas": forms.Textarea(attrs={
                 "class": "w-full bg-surface-container-highest border-none rounded-xl p-3 focus:ring-2 focus:ring-primary/20",
                 "rows": 3,

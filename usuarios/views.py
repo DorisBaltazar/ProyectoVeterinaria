@@ -7,8 +7,29 @@ from django.views.generic import CreateView, ListView, TemplateView, UpdateView
 from .bitacora import registrar_bitacora
 from .forms import LoginForm, UsuarioCreateForm, UsuarioUpdateForm
 from .mixins import RolRequeridoMixin
+from django.views.generic import TemplateView
 from .models import Bitacora
+class LandingView(TemplateView):
+    """Página pública de presentación de la clínica. No requiere
+    autenticación; el botón "Acceso Staff" dirige al login real."""
+    template_name = "usuarios/landing.html"
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["servicios"] = [
+            {"icono": "event_available", "titulo": "Gestión de Citas",
+             "descripcion": "Programación y seguimiento de turnos clínicos, con recordatorios para el equipo veterinario."},
+            {"icono": "pets", "titulo": "Pacientes y Propietarios",
+             "descripcion": "Registro centralizado de mascotas y propietarios, con identificación única por CI."},
+            {"icono": "history_edu", "titulo": "Historial Clínico Digital",
+             "descripcion": "Consultas, diagnósticos, tratamientos y recetas digitales en una línea de tiempo por mascota."},
+            {"icono": "inventory_2", "titulo": "Control de Inventario",
+             "descripcion": "Entradas y salidas de insumos con alertas automáticas de stock mínimo."},
+        ]
+        ctx["direccion"] = "Clínica Veterinaria CIAC, Vinto, Cochabamba"  # ajusta a tu dirección real
+        ctx["telefono"] = "+591 000-00000"                                 # ajusta a tu teléfono real
+        ctx["correo"] = "contacto@ciac.com"                                # ajusta a tu correo real
+        return ctx
 
 class LoginUsuarioView(LoginView):
     template_name = "usuarios/login.html"
