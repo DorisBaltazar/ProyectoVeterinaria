@@ -5,6 +5,7 @@ from . import views
 app_name = "historiales"
 
 urlpatterns = [
+    path("", views.HistorialListView.as_view(), name="lista"),
     path("mascota/<int:pk>/", views.MascotaTimelineView.as_view(), name="timeline"),
     path("mascota/<int:mascota_id>/nueva/", views.HistorialCreateView.as_view(), name="crear"),
     path("<int:pk>/", views.HistorialDetailView.as_view(), name="detalle"),

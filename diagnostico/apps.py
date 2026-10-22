@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class DiagnosticoConfig(AppConfig):
-    name = 'diagnostico'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "diagnostico"

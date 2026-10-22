@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Reporte de diagnósticos IA - Clínica CIAC{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Reporte del módulo de IA</h2>
+<p class="text-secondary text-sm mb-6">Distribución de diagnósticos sugeridos y desempeño percibido del modelo.</p>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl">
+    <div class="bg-white rounded-2xl p-5">
+        <p class="text-xs uppercase tracking-wider text-secondary font-bold">Total diagnósticos</p>
+        <p class="text-3xl font-headline font-extrabold text-primary mt-1">{{ total }}</p>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+        <p class="text-xs uppercase tracking-wider text-secondary font-bold">Confirmados</p>
+        <p class="text-3xl font-headline font-extrabold text-primary mt-1">{{ confirmados }}</p>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+        <p class="text-xs uppercase tracking-wider text-secondary font-bold">Corregidos</p>
+        <p class="text-3xl font-headline font-extrabold text-primary mt-1">{{ corregidos }}</p>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+        <p class="text-xs uppercase tracking-wider text-secondary font-bold">Precisión percibida</p>
+        <p class="text-3xl font-headline font-extrabold text-primary mt-1">
+            {% if precision_percibida is not None %}{{ precision_percibida }}%{% else %}—{% endif %}
+        </p>
+        <p class="text-xs text-secondary mt-1">% de sugerencias confirmadas sin corrección, sobre los casos evaluados.</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl p-6 max-w-2xl">
+    <h3 class="font-headline font-bold text-lg mb-4">Distribución por diagnóstico sugerido</h3>
+    <div class="space-y-3">
+        {% for diagnostico, cantidad in por_diagnostico %}
+        <div>
+            <div class="flex justify-between text-sm mb-1"><span class="font-medium">{{ diagnostico }}</span><span class="text-secondary">{{ cantidad }}</span></div>
+            <div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full" style="width: {% widthratio cantidad total 100 %}%"></div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-secondary text-sm">Todavía no hay datos suficientes para el reporte.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

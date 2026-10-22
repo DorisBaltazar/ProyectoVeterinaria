@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load l10n %}
+{% block title %}Resultado del diagnóstico - Clínica CIAC{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Resultado del diagnóstico asistido</h2>
+<p class="text-secondary text-sm mb-6">{{ diagnostico.mascota }} — {{ diagnostico.fecha|date:"d/m/Y H:i" }}</p>
+
+<div class="grid md:grid-cols-2 gap-6 max-w-4xl">
+    <!-- Predicción principal -->
+    <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6">
+        <p class="text-xs uppercase tracking-wider text-tertiary-fixed font-bold mb-2">Sugerencia del modelo</p>
+        <h3 class="font-headline text-2xl font-extrabold">{{ diagnostico.prediccion }}</h3>
+        <p class="text-sm text-white/80 mt-2">Confianza: <span class="font-bold">{{ diagnostico.confianza }}%</span></p>
+
+        <div class="mt-5 space-y-2">
+            <p class="text-xs uppercase tracking-wider text-white/70 font-bold">Top 3 probabilidades</p>
+            {% for clase, prob in top3 %}
+            <div>
+                <div class="flex justify-between text-xs mb-1"><span>{{ clase }}</span><span>{{ prob }}%</span></div>
+                <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div class="h-full bg-tertiary-fixed rounded-full" style="width: {{ prob|unlocalize }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Retroalimentación del veterinario -->
+    <div class="bg-white rounded-2xl p-6">
+        <h3 class="font-headline font-bold text-lg mb-1">Retroalimentación</h3>
+        <p class="text-xs text-secondary mb-4">Confirma o corrige la sugerencia para registrar el diagnóstico final.</p>
+
+        {% if diagnostico.retroalimentacion == "PENDIENTE" %}
+        <form method="post" action="{% url 'diagnostico:feedback' diagnostico.pk %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.retroalimentacion.label }}</label>
+                {{ feedback_form.retroalimentacion }}
+            </div>
+            <div>
+                <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.diagnostico_real.label }}</label>
+                {{ feedback_form.diagnostico_real }}
+            </div>
+            <div>
+                <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.observaciones_feedback.label }}</label>
+                {{ feedback_form.observaciones_feedback }}
+            </div>
+            <button type="submit" class="bg-primary text-white font-bold px-5 py-2.5 rounded-xl hover:bg-primary-container transition">
+                Guardar retroalimentación
+            </button>
+        </form>
+        {% else %}
+        <div class="bg-surface-container-highest rounded-xl p-4">
+            <p class="text-sm font-semibold">{{ diagnostico.get_retroalimentacion_display }}</p>
+            {% if diagnostico.diagnostico_real %}
+            <p class="text-sm mt-1">Diagnóstico real: <span class="font-medium">{{ diagnostico.diagnostico_real }}</span></p>
+            {% endif %}
+            {% if diagnostico.observaciones_feedback %}
+            <p class="text-xs text-secondary mt-2">{{ diagnostico.observaciones_feedback }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<a href="{% url 'diagnostico:lista' %}" class="inline-block mt-6 text-sm font-medium text-secondary hover:text-primary transition">← Volver al listado</a>
+{% endblock %}

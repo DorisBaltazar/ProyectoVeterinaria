@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
@@ -14,6 +15,29 @@ ROLES_LECTURA = ["ADMIN", "VET", "RECEP"]
 ROLES_CLINICOS = ["ADMIN", "VET"]  # solo personal médico registra/edita historiales
 ROLES_ELIMINACION = ["ADMIN"]
 
+class HistorialListView(RolRequeridoMixin, ListView):
+    """Listado general de consultas, con búsqueda por mascota, propietario, motivo o diagnóstico."""
+
+    model = HistorialClinico
+    roles_permitidos = ROLES_LECTURA
+    template_name = "historiales/historial_list.html"
+    context_object_name = "historiales"
+    paginate_by = 15
+
+    def get_queryset(self):
+        qs = HistorialClinico.objects.select_related(
+            "mascota", "mascota__propietario", "veterinario"
+        ).order_by("-fecha_atencion")
+        q = self.request.GET.get("q")
+        if q:
+            qs = qs.filter(
+                Q(mascota__nombre__icontains=q)
+                | Q(mascota__codigo__icontains=q)
+                | Q(mascota__propietario__nombre_completo__icontains=q)
+                | Q(motivo__icontains=q)
+                | Q(diagnostico__icontains=q)
+            )
+        return qs
 
 class MascotaTimelineView(RolRequeridoMixin, DetailView):
     """RF-04: consultar el historial clínico completo de una mascota (línea de tiempo)."""

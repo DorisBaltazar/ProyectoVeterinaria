@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}IA Diagnóstico - Clínica CIAC{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h2 class="font-headline text-2xl font-extrabold text-primary mb-1">IA Diagnóstico</h2>
+        <p class="text-secondary text-sm">Historial de diagnósticos sugeridos por el modelo.</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{% url 'diagnostico:reporte' %}" class="px-5 py-2.5 rounded-xl font-semibold text-sm text-primary border border-primary/30 hover:bg-primary/5 transition">
+            Ver reporte
+        </a>
+        <a href="{% url 'diagnostico:crear' %}" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-5 py-2.5 rounded-xl shadow hover:scale-[1.02] transition">
+            + Nuevo diagnóstico
+        </a>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-surface-container-highest text-xs uppercase tracking-wider text-secondary">
+            <tr>
+                <th class="text-left p-4">Mascota</th>
+                <th class="text-left p-4">Sugerencia</th>
+                <th class="text-left p-4">Confianza</th>
+                <th class="text-left p-4">Estado</th>
+                <th class="text-left p-4">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in diagnosticos %}
+            <tr class="border-t border-surface-container hover:bg-surface-container-low cursor-pointer"
+                onclick="window.location='{% url 'diagnostico:detalle' d.pk %}'">
+                <td class="p-4 font-medium">{{ d.mascota }}</td>
+                <td class="p-4">{{ d.prediccion }}</td>
+                <td class="p-4">{{ d.confianza }}%</td>
+                <td class="p-4">{{ d.get_retroalimentacion_display }}</td>
+                <td class="p-4 text-secondary">{{ d.fecha|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="p-6 text-center text-secondary">Todavía no hay diagnósticos registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<div class="flex gap-2 mt-4">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-sm">Anterior</a>{% endif %}
+    <span class="px-3 py-1.5 text-sm text-secondary">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-sm">Siguiente</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}
