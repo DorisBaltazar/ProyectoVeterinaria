@@ -8,9 +8,9 @@ from usuarios.mixins import RolRequeridoMixin
 from .forms import InsumoForm, MovimientoInventarioForm
 from .models import Insumo, MovimientoInventario
 
-ROLES_LECTURA = ["ADMIN", "VET"]
+ROLES_LECTURA = ["ADMIN", "RECEP"]
 ROLES_GESTION = ["ADMIN"]  # alta/edición de insumos y entradas
-ROLES_SALIDA = ["ADMIN", "VET"]  # uso de insumos en consulta
+ROLES_SALIDA = ["ADMIN", "RECEP"]  # ADMIN: entradas y salidas; RECEP: solo salidas
 
 
 class InsumoListView(RolRequeridoMixin, ListView):
@@ -86,6 +86,11 @@ class MovimientoCreateView(RolRequeridoMixin, CreateView):
     roles_permitidos = ROLES_SALIDA
     template_name = "inventario/movimiento_form.html"
     success_url = reverse_lazy("inventario:movimientos")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["usuario"] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.instance.usuario = self.request.user

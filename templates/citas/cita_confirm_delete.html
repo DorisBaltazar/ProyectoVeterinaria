@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Eliminar cita - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'citas:lista' %}" class="hover:underline">Citas</a><span>›</span><span class="text-secondary">Eliminar</span>{% endblock %}
 {% block content %}
 <div class="bg-white rounded-2xl p-6 md:p-8 max-w-lg">
     <h2 class="font-headline text-xl font-extrabold text-primary mb-4">Eliminar cita</h2>

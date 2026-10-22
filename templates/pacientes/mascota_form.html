@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{% if object %}Editar{% else %}Nueva{% endif %} mascota - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'pacientes:lista' %}" class="hover:underline">Pacientes</a><span>›</span><span class="text-secondary">Formulario</span>{% endblock %}
 {% block content %}
 <h2 class="font-headline text-2xl font-extrabold text-primary mb-1">
     {% if object %}Editar mascota {% if object.codigo %}<span class="text-base font-normal text-outline">({{ object.codigo }})</span>{% endif %}{% else %}Registrar mascota{% endif %}

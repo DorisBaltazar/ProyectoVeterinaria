@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}IA Diagnóstico - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'diagnostico:lista' %}" class="hover:underline">IA Diagnóstico</a><span>›</span><span class="text-secondary">Listado</span>{% endblock %}
 {% block content %}
 <div class="flex items-center justify-between mb-6">
     <div>

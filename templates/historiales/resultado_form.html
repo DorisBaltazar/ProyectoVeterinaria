@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Agregar resultado de laboratorio - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'historiales:lista' %}" class="hover:underline">Historial</a><span>›</span><span class="text-secondary">Resultado de laboratorio</span>{% endblock %}
 {% block content %}
 <h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Nuevo resultado de laboratorio</h2>
 <p class="text-secondary text-sm mb-6">{{ historial.mascota.nombre }} — consulta del {{ historial.fecha_atencion|date:"d/m/Y" }}</p>

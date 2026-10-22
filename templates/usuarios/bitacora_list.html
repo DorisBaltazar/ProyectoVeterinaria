@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Bitácora - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'usuarios:usuarios_lista' %}" class="hover:underline">Administración</a><span>›</span><span class="text-secondary">Bitácora</span>{% endblock %}
 {% block content %}
 <div class="mb-6">
     <h2 class="font-headline text-2xl font-extrabold text-primary">Bitácora de acciones</h2>

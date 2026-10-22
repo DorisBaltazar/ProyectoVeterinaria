@@ -48,7 +48,7 @@ class MovimientoInventarioModelTests(TestCase):
 
 
 class InventarioViewsPorRolTests(TestCase):
-    """Solo ADMIN gestiona insumos; ADMIN y VET registran salidas por consumo clínico."""
+    """Solo ADMIN gestiona insumos; ADMIN registra entradas y salidas; RECEP solo salidas; VET no accede."""
 
     def setUp(self):
         self.admin = User.objects.create_user("admin_v", password="clave12345")
@@ -61,10 +61,41 @@ class InventarioViewsPorRolTests(TestCase):
 
         self.insumo = Insumo.objects.create(nombre="Suero", stock_actual=10, stock_minimo=2)
 
-    def test_recepcionista_no_puede_ver_inventario(self):
+    def test_veterinario_no_puede_ver_inventario(self):
+        vet = User.objects.create_user("vet_v", password="clave12345")
+        vet.perfil.rol = Perfil.Rol.VETERINARIO
+        vet.perfil.save()
+        self.client.login(username="vet_v", password="clave12345")
+        self.assertEqual(self.client.get("/inventario/").status_code, 403)
+        self.assertEqual(self.client.get("/inventario/movimientos/nuevo/").status_code, 403)
+
+    def test_recepcionista_puede_registrar_salidas(self):
         self.client.login(username="recep_v", password="clave12345")
-        response = self.client.get("/inventario/")
-        self.assertEqual(response.status_code, 403)
+        response = self.client.post("/inventario/movimientos/nuevo/", {
+            "insumo": self.insumo.pk, "tipo": "SALIDA", "cantidad": "3", "motivo": "Uso en consulta"})
+        self.assertEqual(response.status_code, 302)
+        self.insumo.refresh_from_db()
+        self.assertEqual(self.insumo.stock_actual, 7)
+
+    def test_recepcionista_no_puede_registrar_entradas(self):
+        self.client.login(username="recep_v", password="clave12345")
+        response = self.client.post("/inventario/movimientos/nuevo/", {
+            "insumo": self.insumo.pk, "tipo": "ENTRADA", "cantidad": "5", "motivo": "Compra"})
+        self.assertEqual(response.status_code, 200)  # el formulario rechaza la opcion
+        self.insumo.refresh_from_db()
+        self.assertEqual(self.insumo.stock_actual, 10)
+
+    def test_administrador_puede_registrar_entradas(self):
+        self.client.login(username="admin_v", password="clave12345")
+        response = self.client.post("/inventario/movimientos/nuevo/", {
+            "insumo": self.insumo.pk, "tipo": "ENTRADA", "cantidad": "5", "motivo": "Compra"})
+        self.assertEqual(response.status_code, 302)
+        self.insumo.refresh_from_db()
+        self.assertEqual(self.insumo.stock_actual, 15)
+
+    def test_recepcionista_no_puede_crear_insumos(self):
+        self.client.login(username="recep_v", password="clave12345")
+        self.assertEqual(self.client.get("/inventario/nuevo/").status_code, 403)
 
     def test_administrador_puede_crear_insumo(self):
         self.client.login(username="admin_v", password="clave12345")

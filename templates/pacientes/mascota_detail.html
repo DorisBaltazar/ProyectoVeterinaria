@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ mascota.nombre }} - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'pacientes:lista' %}" class="hover:underline">Pacientes</a><span>›</span><span class="text-secondary">Detalle</span>{% endblock %}
 {% block content %}
 <div class="bg-white rounded-2xl p-6 md:p-8 max-w-2xl">
     <div class="flex items-center gap-5 mb-6">

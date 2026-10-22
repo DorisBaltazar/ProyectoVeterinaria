@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Consulta {{ historial.fecha_atencion|date:"d/m/Y" }} - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'historiales:lista' %}" class="hover:underline">Historial</a><span>›</span><span class="text-secondary">Detalle</span>{% endblock %}
 {% block content %}
 <div class="bg-white rounded-2xl p-6 md:p-8 max-w-3xl">
     <div class="flex items-center justify-between mb-6">

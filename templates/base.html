@@ -18,13 +18,13 @@
                         secondary: "#4a6267",
                         tertiary: "#004242",
                         "tertiary-fixed": "#7df5f5",
-                        surface: "#f8f9fa",
+                        surface: "#f1f6f6",
                         "surface-container-lowest": "#ffffff",
-                        "surface-container-low": "#f3f4f5",
-                        "surface-container": "#edeeef",
-                        "surface-container-high": "#e7e8e9",
-                        "surface-container-highest": "#e1e3e4",
-                        "on-surface": "#191c1d",
+                        "surface-container-low": "#eaf1f1",
+                        "surface-container": "#e3ecec",
+                        "surface-container-high": "#dce7e7",
+                        "surface-container-highest": "#e6eeee",
+                        "on-surface": "#161d1d",
                         "on-surface-variant": "#3f4948",
                         outline: "#6f7979",
                         "outline-variant": "#bec8c8",
@@ -40,87 +40,143 @@
         .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+
+        /* ===== Barra lateral oscura ===== */
+        .sidebar { background: linear-gradient(180deg, #00383a 0%, #002a2d 100%); position: relative; overflow: hidden; }
+        .sidebar::after {            /* huella decorativa */
+            content: "pets"; font-family: 'Material Symbols Outlined'; font-size: 11rem; line-height: 1;
+            position: absolute; right: -2.2rem; bottom: 3.5rem; color: rgba(125, 245, 245, .06); pointer-events: none;
+            transform: rotate(18deg);
+        }
+        .nav-item { display: flex; align-items: center; gap: .85rem; padding: .8rem 1.1rem; border-radius: 1rem;
+            font-weight: 500; font-size: .95rem; color: rgba(255,255,255,.82); transition: background .15s, color .15s; }
+        .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .nav-item.active { background: linear-gradient(90deg, #0e7c7b, #0a5f60); color: #fff; font-weight: 600;
+            box-shadow: 0 4px 14px rgba(0,0,0,.25), inset 0 0 0 1px rgba(125,245,245,.25); }
+        .nav-item .material-symbols-outlined { font-size: 1.35rem; }
+        .nav-item.active .material-symbols-outlined { font-variation-settings: "FILL" 1, "wght" 500; }
+
+        /* ===== Fondo y tarjetas del área de contenido ===== */
+        .app-bg { background: radial-gradient(1200px 500px at 90% -10%, #dff0ef 0%, transparent 60%), #f1f6f6; }
+        main .bg-white { box-shadow: 0 1px 2px rgba(0,66,66,.05), 0 8px 24px -12px rgba(0,66,66,.18);
+            border: 1px solid rgba(0,66,66,.05); }
+        main .bg-white.rounded-2xl, main .bg-white.rounded-xl { border-radius: 1.25rem; }
+        main a.bg-white:hover { box-shadow: 0 10px 30px -12px rgba(0,66,66,.35); transform: translateY(-1px); }
+        main table thead { background: #eaf4f4; }
+        main table thead th { color: #2f5558; letter-spacing: .06em; }
+        main table tbody tr:hover { background: #f4fafa; }
+        main input[type=text], main input[type=number], main input[type=date], main input[type=time], main input[type=email],
+        main input[type=password], main input[type=search], main input[type=datetime-local], main select, main textarea {
+            border-radius: .9rem; }
+        main input:focus, main select:focus, main textarea:focus { box-shadow: 0 0 0 3px rgba(14,124,123,.18) !important; }
+        main h2.font-headline { letter-spacing: -.01em; }
     </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
     {% if user.is_authenticated %}
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="hidden md:flex flex-col w-64 bg-surface-container-low shrink-0">
-            <div class="flex items-center gap-3 px-6 py-6">
-                <div class="flex items-center justify-center bg-primary w-10 h-10 rounded-xl shadow">
-                    <span class="material-symbols-outlined text-white" style="font-variation-settings:'FILL' 1;">pets</span>
+        <!-- Barra lateral -->
+        <aside class="sidebar hidden md:flex flex-col w-72 shrink-0 rounded-r-[2rem] z-20">
+            <a href="{% url 'usuarios:dashboard' %}" class="flex items-center gap-3 px-6 py-6 border-b border-white/10 relative z-10">
+                <div class="flex items-center justify-center bg-white w-12 h-12 rounded-full shadow-lg">
+                    <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">pets</span>
                 </div>
                 <div>
-                    <p class="font-headline font-extrabold text-primary leading-none">Clínica CIAC</p>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Gestión Veterinaria</p>
+                    <p class="font-headline font-extrabold text-white text-lg leading-none">Clínica CIAC</p>
+                    <p class="text-[10px] font-bold uppercase tracking-[.18em] text-white/70 mt-1">Gestión Veterinaria</p>
                 </div>
-            </div>
-            <nav class="flex-1 px-3 space-y-1 mt-4">
-                <a href="{% url 'usuarios:dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if request.resolver_match.url_name == 'dashboard' %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">dashboard</span> Panel
+            </a>
+
+            <nav class="flex-1 px-4 pt-6 space-y-1.5 relative z-10">
+                <a href="{% url 'usuarios:dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <span class="material-symbols-outlined">home</span> Inicio
                 </a>
-                <a href="{% url 'pacientes:lista' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if 'pacientes' in request.path or 'mascotas' in request.path %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">pets</span> Mascotas
+                <a href="{% url 'pacientes:lista' %}" class="nav-item {% if '/mascotas' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">pets</span> Pacientes
                 </a>
-                <a href="{% url 'pacientes:propietarios' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if 'propietario' in request.path %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">badge</span> Propietarios
+                <a href="{% url 'pacientes:propietarios' %}" class="nav-item {% if 'propietario' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">groups</span> Propietarios
                 </a>
-                <a href="{% url 'citas:lista' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if 'citas' in request.path %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">calendar_month</span> Citas
+                <a href="{% url 'citas:lista' %}" class="nav-item {% if '/citas' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">calendar_month</span> Citas
                 </a>
-                <a href="{% url 'historiales:lista' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if 'historiales' in request.path %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">description</span> Historial
+                <a href="{% url 'historiales:lista' %}" class="nav-item {% if '/historiales' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">description</span> Historial
                 </a>
                 {% if perfil.rol == "VET" or user.is_superuser %}
-                <a href="{% url 'diagnostico:lista' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if 'diagnostico' in request.path %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">neurology</span> IA Diagnóstico
+                <a href="{% url 'diagnostico:lista' %}" class="nav-item {% if '/diagnostico' in request.path and 'reporte' not in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">neurology</span> IA Diagnóstico
                 </a>
                 {% endif %}
-    
-                {% if perfil.rol == "ADMIN" %}
-                <div class="pt-3 mt-3 border-t border-surface-container-high"></div>
-                <a href="{% url 'usuarios:usuarios_lista' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if 'usuarios/usuarios' in request.path or 'usuarios/nuevo' in request.path %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">manage_accounts</span> Usuarios
+                {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or user.is_superuser %}
+                <a href="{% url 'inventario:lista' %}" class="nav-item {% if '/inventario' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">inventory_2</span> Inventario
                 </a>
-                <a href="{% url 'usuarios:bitacora' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface hover:bg-surface-container-high transition {% if 'bitacora' in request.path %}bg-white text-primary shadow-sm{% endif %}">
-                    <span class="material-symbols-outlined text-xl">history</span> Bitácora
+                {% endif %}
+                {% if perfil.rol == "ADMIN" or perfil.rol == "VET" or user.is_superuser %}
+                <a href="{% url 'diagnostico:reporte' %}" class="nav-item {% if 'reporte' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">monitoring</span> Reportes
+                </a>
+                {% endif %}
+                {% if perfil.rol == "ADMIN" or user.is_superuser %}
+                <div class="my-3 border-t border-white/10"></div>
+                <a href="{% url 'usuarios:usuarios_lista' %}" class="nav-item {% if 'usuarios/usuarios' in request.path or 'usuarios/nuevo' in request.path or 'editar' in request.path and 'usuarios' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">manage_accounts</span> Usuarios
+                </a>
+                <a href="{% url 'usuarios:bitacora' %}" class="nav-item {% if 'bitacora' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">history</span> Bitácora
                 </a>
                 {% endif %}
             </nav>
-            <div class="p-3">
+
+            <div class="p-4 relative z-10">
                 <form method="post" action="{% url 'usuarios:logout' %}">
                     {% csrf_token %}
-                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-high transition">
-                        <span class="material-symbols-outlined text-xl">logout</span> Cerrar sesión
+                    <button type="submit" class="nav-item w-full">
+                        <span class="material-symbols-outlined">logout</span> Cerrar sesión
                     </button>
                 </form>
             </div>
         </aside>
 
-        <!-- Main -->
-        <div class="flex-1 flex flex-col min-w-0">
-            <header class="flex items-center justify-between px-6 py-4 bg-white/70 backdrop-blur-xl sticky top-0 z-10">
+        <!-- Contenido -->
+        <div class="flex-1 flex flex-col min-w-0 app-bg">
+            <header class="flex items-center justify-between gap-4 px-6 py-4 bg-white/80 backdrop-blur-xl sticky top-0 z-10 shadow-[0_1px_0_rgba(0,66,66,.06)]">
                 <div class="md:hidden flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">pets</span>
                     <span class="font-headline font-extrabold text-primary">Clínica CIAC</span>
                 </div>
-                <div class="hidden md:block"></div>
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-medium text-on-surface">{{ user.get_full_name|default:user.username }}</span>
-                    {% if perfil %}
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-tertiary-fixed/40 text-primary px-2 py-1 rounded-full">{{ perfil.get_rol_display }}</span>
+                <form method="get" action="{% url 'pacientes:lista' %}" class="hidden md:flex items-center gap-3 bg-surface-container-low rounded-full px-5 py-2.5 w-full max-w-xl">
+                    <span class="material-symbols-outlined text-primary">search</span>
+                    <input type="search" name="q" placeholder="Buscar paciente, propietario o código..."
+                           class="bg-transparent border-none focus:ring-0 p-0 w-full text-sm placeholder:text-outline">
+                </form>
+                <div class="flex items-center gap-4 ml-auto">
+                    {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or user.is_superuser %}
+                    <a href="{% url 'inventario:lista' %}?alerta=1" title="Alertas de inventario" class="text-primary hover:text-primary-container">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </a>
                     {% endif %}
-                    <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
-                        {{ user.username|slice:":2"|upper }}
+                    <div class="flex items-center gap-3 pl-4 border-l border-surface-container-high">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-container to-primary flex items-center justify-center text-white font-bold text-sm shadow">
+                            {{ user.username|slice:":2"|upper }}
+                        </div>
+                        <div class="hidden sm:block leading-tight">
+                            <p class="text-sm font-bold text-on-surface">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-secondary">{% if perfil %}{{ perfil.get_rol_display }}{% elif user.is_superuser %}Superusuario{% endif %}</p>
+                        </div>
                     </div>
                 </div>
             </header>
 
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-6 lg:p-8">
+                <nav class="flex items-center gap-2 text-xs font-medium text-primary-container mb-4" aria-label="breadcrumb">
+                    <a href="{% url 'usuarios:dashboard' %}" class="hover:underline">Inicio</a>
+                    {% block breadcrumb %}{% endblock %}
+                </nav>
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="mb-4 px-4 py-3 rounded-xl {% if message.tags == 'success' %}bg-emerald-50 text-emerald-800{% elif message.tags == 'error' %}bg-red-50 text-red-800{% else %}bg-surface-container-low text-on-surface{% endif %} font-medium text-sm">
+                        <div class="mb-4 px-4 py-3 rounded-xl {% if message.tags == 'success' %}bg-emerald-50 text-emerald-800{% elif message.tags == 'error' %}bg-red-50 text-red-800{% else %}bg-white text-on-surface{% endif %} font-medium text-sm">
                             {{ message }}
                         </div>
                     {% endfor %}

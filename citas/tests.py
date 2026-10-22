@@ -2,6 +2,7 @@ from datetime import date, time
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.urls import reverse
 
 from usuarios.models import Perfil
 from .models import Cita
@@ -94,9 +95,9 @@ class DashboardRecordatorioTests(TestCase):
             propietario_nombre="Juan Perez", mascota_nombre="Firulais",
             fecha=date.today(), hora=time(15, 0), motivo="Control",
         )
-        response = self.client.get("/")
+        response = self.client.get(reverse("usuarios:dashboard"))
         self.assertContains(response, "Firulais")
 
     def test_dashboard_sin_citas_hoy_muestra_mensaje(self):
-        response = self.client.get("/")
+        response = self.client.get(reverse("usuarios:dashboard"))
         self.assertContains(response, "No tienes citas programadas para hoy")

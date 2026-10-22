@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Diagnóstico asistido por IA - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'diagnostico:lista' %}" class="hover:underline">IA Diagnóstico</a><span>›</span><span class="text-secondary">Formulario</span>{% endblock %}
 {% block content %}
 <h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Diagnóstico asistido por IA</h2>
 <p class="text-secondary text-sm mb-6">

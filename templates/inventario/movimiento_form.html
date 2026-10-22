@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Registrar movimiento - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'inventario:lista' %}" class="hover:underline">Inventario</a><span>›</span><span class="text-secondary">Nuevo movimiento</span>{% endblock %}
 {% block content %}
 <h2 class="font-headline text-2xl font-extrabold text-primary mb-6">Registrar movimiento de inventario</h2>
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">

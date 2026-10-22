@@ -35,6 +35,15 @@ class MovimientoInventarioForm(forms.ModelForm):
             "motivo": forms.TextInput(attrs={"class": INPUT, "placeholder": "Ej: Compra a proveedor, Uso en consulta"}),
         }
 
+    def __init__(self, *args, usuario=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.usuario = usuario
+        # La recepcionista solo registra egresos (salidas); el administrador, ambos.
+        self.solo_salidas = bool(usuario and not usuario.is_superuser and getattr(usuario, "perfil", None)
+                                 and usuario.perfil.rol == "RECEP")
+        if self.solo_salidas:
+            self.fields["tipo"].choices = [(MovimientoInventario.Tipo.SALIDA, "Salida")]
+
     def clean(self):
         cleaned = super().clean()
         tipo = cleaned.get("tipo")

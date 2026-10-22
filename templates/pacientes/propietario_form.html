@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} propietario - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'pacientes:lista' %}" class="hover:underline">Pacientes</a><span>›</span><span class="text-secondary">Formulario</span>{% endblock %}
 {% block content %}
 <h2 class="font-headline text-2xl font-extrabold text-primary mb-6">
     {% if object %}Editar propietario{% else %}Registrar propietario{% endif %}

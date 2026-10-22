@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Movimientos de inventario - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'inventario:lista' %}" class="hover:underline">Inventario</a><span>›</span><span class="text-secondary">Movimientos</span>{% endblock %}
 {% block content %}
 <div class="flex items-center justify-between mb-6">
     <h2 class="font-headline text-2xl font-extrabold text-primary">Movimientos de inventario</h2>

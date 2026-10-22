@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Historial clínico - Clínica CIAC{% endblock %}
 
+{% block breadcrumb %}<span>›</span><a href="{% url 'historiales:lista' %}" class="hover:underline">Historial</a><span>›</span><span class="text-secondary">Listado</span>{% endblock %}
 {% block content %}
 <div class="max-w-6xl mx-auto space-y-6">
     <div>
         <h1 class="font-headline text-3xl font-extrabold text-primary">Historial clínico</h1>
-        <p class="text-secondary mt-1">Consultas y controles registrados</p>
+        <p class="text-secondary mt-1">Consultas y controles registrados. Para registrar una nueva, entra a la ficha de la mascota.</p>
     </div>
 
     <form method="get" class="flex gap-3">

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Reporte de diagnósticos IA - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'diagnostico:lista' %}" class="hover:underline">IA Diagnóstico</a><span>›</span><span class="text-secondary">Reporte</span>{% endblock %}
 {% block content %}
 <h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Reporte del módulo de IA</h2>
 <p class="text-secondary text-sm mb-6">Distribución de diagnósticos sugeridos y desempeño percibido del modelo.</p>

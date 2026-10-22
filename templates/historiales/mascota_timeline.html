@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Historial clínico de {{ mascota.nombre }} - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'historiales:lista' %}" class="hover:underline">Historial</a><span>›</span><span class="text-secondary">Línea de tiempo</span>{% endblock %}
 {% block content %}
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
     <div class="flex items-center gap-4">
