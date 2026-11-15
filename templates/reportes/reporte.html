@@ -19,11 +19,10 @@
     <a href="?{{ querystring }}{% if querystring %}&{% endif %}formato=csv" class="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm inline-flex items-center gap-1"><span class="material-symbols-outlined text-base">download</span> Exportar a Excel (CSV)</a>
     <a href="?{{ querystring }}{% if querystring %}&{% endif %}formato=imprimir" target="_blank" class="bg-teal-50 text-primary px-5 py-2.5 rounded-xl font-semibold text-sm inline-flex items-center gap-1"><span class="material-symbols-outlined text-base">print</span> Imprimir / PDF</a>
 </div>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 max-w-4xl">
-    {% for etiqueta, valor in resultado.resumen %}
-    <div class="bg-white rounded-2xl p-4"><p class="text-xs uppercase tracking-wider text-secondary font-bold">{{ etiqueta }}</p><p class="text-2xl font-headline font-extrabold text-primary mt-1">{{ valor }}</p></div>
-    {% endfor %}
-</div>
+{% include "reportes/_estilos.html" %}
+<div class="rp-kpis">{% for etiqueta, valor in resultado.resumen %}<div class="rp-kpi"><p>{{ etiqueta }}</p><b>{{ valor }}</b></div>{% endfor %}</div>
+{% if resultado.graficos %}<h3 class="font-headline font-bold text-lg text-primary mb-3">Estadísticas</h3>{% include "reportes/_graficos.html" with graficos=resultado.graficos %}{% endif %}
+<h3 class="font-headline font-bold text-lg text-primary mb-3">Detalle ({{ resultado.filas|length }} registros)</h3>
 <div class="bg-white rounded-2xl p-2 overflow-x-auto">
     <table class="w-full text-sm">
         <thead><tr class="text-left text-secondary text-xs uppercase">{% for c in resultado.columnas %}<th class="p-3 whitespace-nowrap">{{ c }}</th>{% endfor %}</tr></thead>

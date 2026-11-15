@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, TemplateView, UpdateView
+from django.shortcuts import redirect
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 
 from .bitacora import registrar_bitacora
 from .forms import LoginForm, UsuarioCreateForm, UsuarioUpdateForm
@@ -42,8 +44,21 @@ class LoginUsuarioView(LoginView):
         return response
 
 
+def csrf_fallo(request, reason=""):
+    """Vista amigable cuando falla la verificación CSRF (formulario vencido,
+    sesión iniciada o cerrada en otra pestaña): vuelve a cargar la pantalla
+    en lugar de mostrar el error 403."""
+    if request.user.is_authenticated:
+        messages.warning(request, "Tu sesión cambió o el formulario venció. Intenta de nuevo.")
+        destino = request.META.get("HTTP_REFERER", "")
+        if destino and url_has_allowed_host_and_scheme(destino, {request.get_host()}):
+            return redirect(destino)
+        return redirect("usuarios:dashboard")
+    return redirect("usuarios:login")
+
+
 class LogoutUsuarioView(LogoutView):
-    next_page = "usuarios:login"
+    next_page = "usuarios:landing"
 
 
 class DashboardView(RolRequeridoMixin, TemplateView):
@@ -125,6 +140,47 @@ class UsuarioUpdateView(RolRequeridoMixin, UpdateView):
         )
         messages.success(self.request, "Usuario actualizado correctamente.")
         return response
+
+
+class UsuarioDeleteView(RolRequeridoMixin, DeleteView):
+    """El administrador puede eliminar usuarios. No puede eliminarse a sí mismo
+    ni a un superusuario. El historial queda conservado (los registros que
+    referenciaban al usuario quedan sin autor, no se borran)."""
+    model = User
+    roles_permitidos = ["ADMIN"]
+    template_name = "usuarios/usuario_confirm_delete.html"
+    success_url = reverse_lazy("usuarios:usuarios_lista")
+
+    def dispatch(self, request, *args, **kwargs):
+        resp = super().dispatch(request, *args, **kwargs)
+        return resp
+
+    def _bloqueado(self, obj):
+        if obj.pk == self.request.user.pk:
+            return "No puedes eliminar tu propio usuario."
+        if obj.is_superuser:
+            return "No se puede eliminar a un superusuario."
+        return None
+
+    def get(self, request, *args, **kwargs):
+        obj = self.get_object()
+        motivo = self._bloqueado(obj)
+        if motivo:
+            messages.error(request, motivo)
+            return redirect("usuarios:usuarios_lista")
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        motivo = self._bloqueado(obj)
+        if motivo:
+            messages.error(request, motivo)
+            return redirect("usuarios:usuarios_lista")
+        nombre = obj.username
+        obj.delete()
+        registrar_bitacora(request.user, "Eliminó usuario", nombre)
+        messages.success(request, f"Usuario «{nombre}» eliminado.")
+        return redirect("usuarios:usuarios_lista")
 
 
 # --- RF-12 / HU-04: bitácora de acciones (solo Administrador) ---

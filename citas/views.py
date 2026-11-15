@@ -49,7 +49,26 @@ class CitaDetailView(RolRequeridoMixin, DetailView):
     context_object_name = "cita"
 
 
-class CitaCreateView(RolRequeridoMixin, CreateView):
+def _propietarios_registrados():
+    """Propietarios con sus mascotas, para el selector del formulario de citas."""
+    from pacientes.models import Propietario
+    return [
+        {"id": p.pk, "etiqueta": f"{p.nombre_completo} — CI {p.ci}", "nombre": p.nombre_completo,
+         "telefono": p.telefono,
+         "mascotas": [{"nombre": m.nombre, "especie": m.especie if m.especie in ("PERRO", "GATO") else "OTRO"}
+                      for m in p.mascotas.filter(activo=True)]}
+        for p in Propietario.objects.prefetch_related("mascotas").order_by("nombre_completo")
+    ]
+
+
+class PropietariosCitaMixin:
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["propietarios_registrados"] = _propietarios_registrados()
+        return ctx
+
+
+class CitaCreateView(PropietariosCitaMixin, RolRequeridoMixin, CreateView):
     model = Cita
     form_class = CitaForm
     roles_permitidos = ROLES_GESTION
@@ -63,7 +82,7 @@ class CitaCreateView(RolRequeridoMixin, CreateView):
         return response
 
 
-class CitaUpdateView(RolRequeridoMixin, UpdateView):
+class CitaUpdateView(PropietariosCitaMixin, RolRequeridoMixin, UpdateView):
     model = Cita
     form_class = CitaForm
     roles_permitidos = ROLES_ACTUALIZACION

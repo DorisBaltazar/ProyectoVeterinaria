@@ -71,6 +71,22 @@
         main input:focus, main select:focus, main textarea:focus { box-shadow: 0 0 0 3px rgba(14,124,123,.18) !important; }
         main h2.font-headline { letter-spacing: -.01em; }
     </style>
+    <script>
+        // Evita el doble envío (doble clic en Guardar / Entrar): el segundo envío usaría un token CSRF ya vencido
+        document.addEventListener("submit", function (e) {
+            const f = e.target;
+            if (!f || (f.method || "").toLowerCase() !== "post") return;
+            if (f.dataset.enviando === "1") { e.preventDefault(); return; }
+            f.dataset.enviando = "1";
+            setTimeout(function () { f.dataset.enviando = ""; }, 4000);
+        });
+    </script>
+    <script>
+        // Si el navegador restaura la página desde su memoria (botón Atrás), recarga para validar la sesión
+        window.addEventListener("pageshow", function (e) {
+            if (e.persisted) { window.location.reload(); }
+        });
+    </script>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
     {% if user.is_authenticated %}
@@ -186,6 +202,25 @@
     {% else %}
         {% block content_public %}{% endblock %}
     {% endif %}
+    <script>
+        // Centra los formularios y su encabezado en el área de contenido
+        document.addEventListener("DOMContentLoaded", function () {
+            const main = document.querySelector("main");
+            if (!main) return;
+            const caja = Array.from(main.children).find(function (el) {
+                return el.matches('form[method=post], form[method=POST], div.bg-white') && /\bmax-w-(md|lg|xl|2xl|3xl|4xl)\b/.test(el.className);
+            });
+            if (!caja) return;
+            const ancho = getComputedStyle(caja).maxWidth;
+            caja.style.marginLeft = caja.style.marginRight = "auto";
+            Array.from(main.children).forEach(function (el) {
+                if (el === caja) return;
+                if (el.tagName === "H2" || el.tagName === "P" || (el.tagName === "DIV" && !el.className.includes("bg-white") && el.querySelector("h2"))) {
+                    el.style.maxWidth = ancho; el.style.marginLeft = el.style.marginRight = "auto";
+                }
+            });
+        });
+    </script>
     <script>
         // Marca con (*) los campos obligatorios de cada formulario de carga de datos
         document.addEventListener("DOMContentLoaded", function () {

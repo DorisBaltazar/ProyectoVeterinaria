@@ -1,6 +1,8 @@
 """Pruebas de los reportes exportables (RP-xx) y del rechazo de valores
 negativos / fuera de rango (VAL-xx)."""
 from datetime import date, timedelta
+
+from django.contrib.auth.models import User
 from decimal import Decimal
 
 from django.test import TestCase
@@ -12,7 +14,7 @@ from historiales.models import HistorialClinico
 from inventario.models import Insumo, MovimientoInventario
 from pacientes.models import Mascota, Propietario
 from usuarios.models import Bitacora, Perfil
-from usuarios.test_correcciones import BaseCorrecciones
+from usuarios.test_correcciones import BaseCorrecciones, crear_usuario
 
 
 class ReportesTests(BaseCorrecciones):
@@ -208,3 +210,134 @@ class ValidacionesTests(BaseCorrecciones):
         r = self.client.get("/mascotas/nueva/")
         self.assertContains(r, 'min="0.01"')
         self.assertContains(r, 'max="200"')
+
+
+class CambiosFinalesTests(BaseCorrecciones):
+    def test_fx01_laboratorio_rechaza_valor_negativo(self):
+        m = Mascota.objects.create(propietario=self.prop, nombre="Rex")
+        h = HistorialClinico.objects.create(mascota=m, veterinario=self.vet, creado_por=self.vet,
+                                            fecha_atencion=timezone.now(), motivo="x", sintomas="x", diagnostico="x")
+        self.entrar(self.admin)
+        r = self.client.get(f"/historiales/{h.pk}/laboratorio/nuevo/")
+        self.assertContains(r, 'min="0"')
+        r = self.client.post(f"/historiales/{h.pk}/laboratorio/nuevo/", {
+            "tipo_examen": "ORINA", "nombre_variable": "Densidad urinaria", "valor": "-0.002", "unidad": "mg/dL"})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(h.resultados_lab.count(), 0)
+
+    def test_fx02_cita_lista_propietarios_registrados(self):
+        Mascota.objects.create(propietario=self.prop, nombre="Rex")
+        self.entrar(self.recep)
+        r = self.client.get("/citas/nueva/")
+        self.assertContains(r, "Buscar propietario registrado")
+        self.assertContains(r, "Ana Rojas")
+        self.assertContains(r, "Rex")
+
+    def test_fx03_admin_elimina_usuario_y_conserva_historial(self):
+        victima = crear_usuario("vet_borrar", Perfil.Rol.VETERINARIO)
+        c = Cita.objects.create(propietario_nombre="A", mascota_nombre="B", fecha=date.today(), hora="10:00",
+                                motivo="m", creado_por=victima)
+        self.entrar(self.admin)
+        self.assertEqual(self.client.get(f"/usuarios/{victima.pk}/eliminar/").status_code, 200)
+        r = self.client.post(f"/usuarios/{victima.pk}/eliminar/")
+        self.assertEqual(r.status_code, 302)
+        self.assertFalse(User.objects.filter(pk=victima.pk).exists())
+        c.refresh_from_db()
+        self.assertIsNone(c.creado_por)
+        self.assertTrue(Bitacora.objects.filter(accion="Eliminó usuario").exists())
+
+    def test_fx04_no_se_puede_eliminar_a_si_mismo_ni_sin_ser_admin(self):
+        self.entrar(self.admin)
+        self.client.post(f"/usuarios/{self.admin.pk}/eliminar/")
+        self.assertTrue(User.objects.filter(pk=self.admin.pk).exists())
+        otro = crear_usuario("otro", Perfil.Rol.VETERINARIO)
+        self.entrar(self.recep)
+        self.assertEqual(self.client.post(f"/usuarios/{otro.pk}/eliminar/").status_code, 403)
+        self.assertTrue(User.objects.filter(pk=otro.pk).exists())
+
+
+class SesionTests(BaseCorrecciones):
+    def test_ses01_cerrar_sesion_va_a_la_pagina_principal_y_bloquea_el_panel(self):
+        self.entrar(self.admin)
+        r = self.client.post("/logout/")
+        self.assertRedirects(r, "/", fetch_redirect_response=False)
+        r = self.client.get("/panel/")
+        self.assertEqual(r.status_code, 302)
+        self.assertIn("/login/", r["Location"])
+
+    def test_ses02_paginas_con_sesion_no_se_guardan_en_cache(self):
+        self.entrar(self.admin)
+        r = self.client.get("/panel/")
+        self.assertIn("no-store", r["Cache-Control"])
+        self.assertIn("no-cache", r["Cache-Control"])
+
+
+class CorreoYCsrfTests(BaseCorrecciones):
+    def test_em01_usuario_no_admite_correo_duplicado(self):
+        self.entrar(self.admin)
+        r = self.client.post("/usuarios/nuevo/", {
+            "username": "nuevo1", "first_name": "N", "last_name": "U", "email": "VET_C@ciac.com",
+            "password1": "ClaveSegura2026", "password2": "ClaveSegura2026", "rol": "VET"})
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Ya existe un usuario con ese correo")
+        self.assertFalse(User.objects.filter(username="nuevo1").exists())
+
+    def test_em02_editar_usuario_con_su_propio_correo_funciona(self):
+        self.entrar(self.admin)
+        r = self.client.post(f"/usuarios/{self.vet.pk}/editar/", {
+            "first_name": "V", "last_name": "C", "email": self.vet.email, "is_active": "on", "rol": "VET"})
+        self.assertEqual(r.status_code, 302)
+
+    def test_em03_propietario_correo_duplicado(self):
+        Propietario.objects.create(ci="111", nombre_completo="Uno", telefono="70012345", correo="a@x.com")
+        self.entrar(self.recep)
+        r = self.client.post("/mascotas/propietario/nuevo/", {
+            "ci": "222", "nombre_completo": "Dos", "telefono": "70012345", "correo": "A@X.com", "direccion": ""})
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Ya hay un propietario registrado con ese correo")
+
+    def test_em04_formularios_muestran_etiquetas(self):
+        self.entrar(self.admin)
+        r = self.client.get(f"/mascotas/propietario/{self.prop.pk}/editar/")
+        for t in ("Cédula de identidad", "Nombre completo", "Teléfono", "Correo electrónico", "Dirección"):
+            self.assertContains(r, t)
+        i = Insumo.objects.create(nombre="X", stock_actual=1, stock_minimo=1)
+        r = self.client.get(f"/inventario/{i.pk}/editar/")
+        self.assertContains(r, "Nombre del insumo")
+        self.assertContains(r, "Unidad de medida")
+
+    def test_cs01_fallo_csrf_redirige_en_vez_de_mostrar_403(self):
+        from django.test import Client
+        c = Client(enforce_csrf_checks=True)
+        r = c.post("/login/", {"username": "x", "password": "y"})
+        self.assertEqual(r.status_code, 302)
+        self.assertIn("/login/", r["Location"])
+
+
+class EstadisticasReportesTests(BaseCorrecciones):
+    def test_es01_reportes_incluyen_graficos_y_kpis(self):
+        m = Mascota.objects.create(propietario=self.prop, nombre="Rex", especie="PERRO", raza="Mestizo")
+        HistorialClinico.objects.create(mascota=m, veterinario=self.vet, creado_por=self.vet,
+                                        fecha_atencion=timezone.now(), motivo="x", sintomas="x", diagnostico="Sano")
+        Cita.objects.create(propietario_nombre="A", mascota_nombre="Rex", fecha=date.today(), hora="10:00", motivo="Vacuna")
+        Insumo.objects.create(nombre="Gasas", categoria="MATERIAL", stock_actual=1, stock_minimo=5, precio_unitario=3)
+        self.entrar(self.admin)
+        for clave, titulo in (("pacientes", "Pacientes por especie"), ("citas", "Citas por estado"),
+                              ("atenciones", "Atenciones por veterinario"), ("inventario", "Estado del stock")):
+            r = self.client.get(f"/reportes/{clave}/")
+            self.assertContains(r, "rp-card", msg_prefix=clave)
+            self.assertContains(r, titulo)
+            r = self.client.get(f"/reportes/{clave}/?formato=imprimir")
+            self.assertContains(r, titulo)
+            self.assertContains(r, "Estadísticas")
+
+    def test_es02_reporte_sin_datos_no_falla(self):
+        self.entrar(self.admin)
+        for clave in ("pacientes", "citas", "atenciones", "inventario", "movimientos", "ia"):
+            self.assertEqual(self.client.get(f"/reportes/{clave}/").status_code, 200, clave)
+            self.assertEqual(self.client.get(f"/reportes/{clave}/?formato=imprimir").status_code, 200, clave)
+
+    def test_es03_resumen_ia_tiene_graficos_y_exportar(self):
+        self.entrar(self.admin)
+        r = self.client.get("/diagnostico/reporte/")
+        self.assertContains(r, "Exportar a Excel")

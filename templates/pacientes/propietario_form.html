@@ -8,13 +8,30 @@
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
     {% csrf_token %}
     <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Cédula de identidad (CI)</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.ci }}</div>
-        {% if form.ci.errors %}<p class="text-error text-sm mt-1">{{ form.ci.errors.0 }}</p>{% endif %}
+        {% for e in form.ci.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre_completo }}</div>
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.telefono }}</div>
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.correo }}</div>
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.direccion }}</div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre completo</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre_completo }}</div>
+        {% for e in form.nombre_completo.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Teléfono</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.telefono }}</div>
+        {% for e in form.telefono.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Correo electrónico (opcional)</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.correo }}</div>
+        {% for e in form.correo.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Dirección (opcional)</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.direccion }}</div>
+        {% for e in form.direccion.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
+    </div>
     <div class="flex gap-3 pt-2">
         <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
         {% if object %}

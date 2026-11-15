@@ -6,6 +6,16 @@
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 max-w-3xl">
     {% csrf_token %}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2 bg-teal-50 rounded-2xl p-4">
+            <label class="text-xs font-bold uppercase tracking-wider text-primary mb-1 block">Buscar propietario registrado</label>
+            <input type="search" id="buscar-propietario" list="lista-propietarios" autocomplete="off"
+                   placeholder="Escribe un nombre o CI y elígelo de la lista…"
+                   class="w-full bg-white border-none rounded-xl p-3 focus:ring-2 focus:ring-primary/20">
+            <datalist id="lista-propietarios">
+                {% for p in propietarios_registrados %}<option value="{{ p.etiqueta }}"></option>{% endfor %}
+            </datalist>
+            <p class="text-xs text-secondary mt-2" id="ayuda-propietario">Al elegirlo se llenan solos su nombre, teléfono y mascotas. Si no está registrado, escribe sus datos en los campos de abajo.</p>
+        </div>
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre del propietario</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.propietario_nombre }}</div>
@@ -17,6 +27,7 @@
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre de la mascota</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.mascota_nombre }}</div>
+            <datalist id="lista-mascotas"></datalist>
         </div>
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Especie</label>
@@ -69,6 +80,40 @@
     </div>
 </form>
 
+{{ propietarios_registrados|json_script:"datos-propietarios" }}
+<script>
+    // Selector de propietarios registrados: autocompleta nombre, teléfono y mascotas
+    document.addEventListener("DOMContentLoaded", function () {
+        const datos = JSON.parse(document.getElementById("datos-propietarios").textContent);
+        const buscar = document.getElementById("buscar-propietario");
+        const nombre = document.getElementById("id_propietario_nombre");
+        const tel = document.getElementById("id_propietario_telefono");
+        const masc = document.getElementById("id_mascota_nombre");
+        const esp = document.getElementById("id_especie");
+        const lista = document.getElementById("lista-mascotas");
+        const ayuda = document.getElementById("ayuda-propietario");
+        if (!buscar) return;
+        masc.setAttribute("list", "lista-mascotas");
+        masc.setAttribute("autocomplete", "off");
+        let actual = null;
+        buscar.addEventListener("input", function () {
+            const p = datos.find(function (d) { return d.etiqueta === buscar.value; });
+            if (!p) return;
+            actual = p;
+            nombre.value = p.nombre; tel.value = p.telefono;
+            lista.innerHTML = "";
+            p.mascotas.forEach(function (m) { const o = document.createElement("option"); o.value = m.nombre; lista.appendChild(o); });
+            if (p.mascotas.length === 1) { masc.value = p.mascotas[0].nombre; esp.value = p.mascotas[0].especie; }
+            else { masc.value = ""; masc.focus(); }
+            ayuda.textContent = "Propietario registrado: datos cargados" + (p.mascotas.length ? ". Elige su mascota." : " (no tiene mascotas registradas; escribe el nombre).");
+        });
+        masc.addEventListener("input", function () {
+            if (!actual) return;
+            const m = actual.mascotas.find(function (x) { return x.nombre === masc.value; });
+            if (m) esp.value = m.especie;
+        });
+    });
+</script>
 {% if form.estado %}
 <script>
     // Fecha y hora: solo editables con estado Pendiente (reprogramación)

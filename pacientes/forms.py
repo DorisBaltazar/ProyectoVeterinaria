@@ -32,6 +32,16 @@ class PropietarioForm(forms.ModelForm):
             }),
         }
 
+    def clean_correo(self):
+        correo = (self.cleaned_data.get("correo") or "").strip().lower()
+        if correo:
+            qs = Propietario.objects.filter(correo__iexact=correo)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError("Ya hay un propietario registrado con ese correo electrónico.")
+        return correo
+
     def clean_ci(self):
         ci = self.cleaned_data["ci"].strip()
         qs = Propietario.objects.filter(ci=ci)

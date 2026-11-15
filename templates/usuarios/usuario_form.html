@@ -30,6 +30,7 @@
     <div>
         <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Correo electrónico</label>
         {{ form.email }}
+        {% for e in form.email.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
 
     <div>

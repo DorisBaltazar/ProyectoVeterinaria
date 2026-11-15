@@ -9,6 +9,18 @@ INPUT = "w-full bg-transparent border-none focus:ring-0 text-on-surface font-med
 SELECT = "w-full bg-surface-container-highest border-none rounded-xl p-3 focus:ring-2 focus:ring-primary/20"
 
 
+def _correo_unico(email, instancia):
+    """El correo no puede repetirse entre usuarios (sin distinguir mayúsculas)."""
+    email = (email or "").strip().lower()
+    if email:
+        qs = User.objects.filter(email__iexact=email)
+        if instancia is not None and instancia.pk:
+            qs = qs.exclude(pk=instancia.pk)
+        if qs.exists():
+            raise forms.ValidationError("Ya existe un usuario con ese correo electrónico.")
+    return email
+
+
 class LoginForm(AuthenticationForm):
     """AuthenticationForm con estilo Tailwind acorde al diseño de Clínica CIAC."""
 
@@ -40,6 +52,9 @@ class UsuarioCreateForm(forms.ModelForm):
             "last_name": forms.TextInput(attrs={"class": SELECT, "placeholder": "Apellidos"}),
             "email": forms.EmailInput(attrs={"class": SELECT, "placeholder": "Correo electrónico"}),
         }
+
+    def clean_email(self):
+        return _correo_unico(self.cleaned_data.get("email"), self.instance)
 
     def clean_username(self):
         username = self.cleaned_data["username"].strip()
@@ -83,6 +98,9 @@ class UsuarioUpdateForm(forms.ModelForm):
             "last_name": forms.TextInput(attrs={"class": SELECT, "placeholder": "Apellidos"}),
             "email": forms.EmailInput(attrs={"class": SELECT, "placeholder": "Correo electrónico"}),
         }
+
+    def clean_email(self):
+        return _correo_unico(self.cleaned_data.get("email"), self.instance)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -7,19 +7,30 @@
 </h2>
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
     {% csrf_token %}
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre }}</div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre del insumo</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre }}</div>
+        {% for e in form.nombre.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
+    </div>
     <div>
         <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Categoría</label>
         {{ form.categoria }}
+        {% for e in form.categoria.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.unidad_medida }}</div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Unidad de medida (ej: kg, ml, caja, unidad)</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.unidad_medida }}</div>
+        {% for e in form.unidad_medida.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
+    </div>
     <div>
         <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Stock mínimo (para alertas)</label>
         {{ form.stock_minimo }}
+        {% for e in form.stock_minimo.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Precio unitario (opcional)</label>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Precio unitario en Bs (opcional)</label>
         {{ form.precio_unitario }}
+        {% for e in form.precio_unitario.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     {% if not object %}
     <p class="text-xs text-secondary bg-teal-50 p-3 rounded-xl">

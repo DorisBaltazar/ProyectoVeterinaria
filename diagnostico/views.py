@@ -108,6 +108,13 @@ class ReporteDiagnosticosView(RolRequeridoMixin, TemplateView):
         ctx["confirmados"] = qs.filter(retroalimentacion=DiagnosticoIA.Retroalimentacion.CONFIRMADO).count()
         ctx["corregidos"] = qs.filter(retroalimentacion=DiagnosticoIA.Retroalimentacion.CORREGIDO).count()
         ctx["pendientes"] = qs.filter(retroalimentacion=DiagnosticoIA.Retroalimentacion.PENDIENTE).count()
+        from reportes.definiciones import grafico
+        ctx["graficos"] = [g for g in [
+            grafico("Retroalimentación del veterinario", [
+                ("Confirmados", ctx["confirmados"]), ("Corregidos", ctx["corregidos"]),
+                ("Pendientes", ctx["pendientes"])], "dona"),
+            grafico("Diagnósticos sugeridos", conteo.most_common(8)),
+        ] if g]
         if total:
             evaluados = ctx["confirmados"] + ctx["corregidos"]
             ctx["precision_percibida"] = round((ctx["confirmados"] / evaluados) * 100, 1) if evaluados else None
