@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models, transaction
 from django.core.exceptions import ValidationError
+from config import validadores as val
 
 
 class Insumo(models.Model):
@@ -17,12 +18,14 @@ class Insumo(models.Model):
     unidad_medida = models.CharField(
         max_length=20, default="unidad", help_text="Ej: unidad, ml, caja, tableta."
     )
-    stock_actual = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    stock_actual = models.DecimalField(max_digits=10, decimal_places=2, default=0,
+                                       validators=[val.no_negativo()])
     stock_minimo = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0,
+        max_digits=10, decimal_places=2, default=0, validators=[val.no_negativo()],
         help_text="Bajo este nivel, el insumo aparece en las alertas de reabastecimiento.",
     )
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True,
+                                          validators=[val.no_negativo()])
     activo = models.BooleanField(default=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
@@ -54,7 +57,7 @@ class MovimientoInventario(models.Model):
 
     insumo = models.ForeignKey(Insumo, on_delete=models.PROTECT, related_name="movimientos")
     tipo = models.CharField(max_length=8, choices=Tipo.choices)
-    cantidad = models.DecimalField(max_digits=10, decimal_places=2)
+    cantidad = models.DecimalField(max_digits=10, decimal_places=2, validators=[val.positivo()])
     motivo = models.CharField(
         max_length=150, help_text="Ej: Compra, Uso en consulta, Ajuste de inventario, Vencimiento."
     )

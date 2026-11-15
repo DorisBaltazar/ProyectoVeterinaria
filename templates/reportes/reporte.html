@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ defn.titulo }} - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'reportes:index' %}" class="hover:underline">Reportes</a><span>›</span><span class="text-secondary">{{ defn.titulo }}</span>{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-1">{{ defn.titulo }}</h2>
+<p class="text-secondary text-sm mb-5">{{ defn.descripcion }}</p>
+
+<form method="get" class="bg-white rounded-2xl p-5 mb-5 flex flex-wrap items-end gap-4">
+    {% for f in form %}
+    <div><label class="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">{{ f.label }}</label>{{ f }}
+        {% for e in f.errors %}<p class="text-red-700 text-xs mt-1">{{ e }}</p>{% endfor %}</div>
+    {% endfor %}
+    <button type="submit" class="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm">Generar</button>
+    <a href="{% url 'reportes:reporte' clave %}" class="text-secondary text-sm px-3 py-2.5">Limpiar</a>
+</form>
+
+{% if resultado %}
+<div class="flex flex-wrap gap-3 mb-4">
+    <a href="?{{ querystring }}{% if querystring %}&{% endif %}formato=csv" class="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm inline-flex items-center gap-1"><span class="material-symbols-outlined text-base">download</span> Exportar a Excel (CSV)</a>
+    <a href="?{{ querystring }}{% if querystring %}&{% endif %}formato=imprimir" target="_blank" class="bg-teal-50 text-primary px-5 py-2.5 rounded-xl font-semibold text-sm inline-flex items-center gap-1"><span class="material-symbols-outlined text-base">print</span> Imprimir / PDF</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 max-w-4xl">
+    {% for etiqueta, valor in resultado.resumen %}
+    <div class="bg-white rounded-2xl p-4"><p class="text-xs uppercase tracking-wider text-secondary font-bold">{{ etiqueta }}</p><p class="text-2xl font-headline font-extrabold text-primary mt-1">{{ valor }}</p></div>
+    {% endfor %}
+</div>
+<div class="bg-white rounded-2xl p-2 overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead><tr class="text-left text-secondary text-xs uppercase">{% for c in resultado.columnas %}<th class="p-3 whitespace-nowrap">{{ c }}</th>{% endfor %}</tr></thead>
+        <tbody>
+        {% for fila in resultado.filas %}
+        <tr class="border-t border-surface-container-highest">{% for v in fila %}<td class="p-3 align-top">{{ v }}</td>{% endfor %}</tr>
+        {% empty %}
+        <tr><td class="p-6 text-secondary" colspan="{{ resultado.columnas|length }}">No hay registros con los filtros elegidos.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

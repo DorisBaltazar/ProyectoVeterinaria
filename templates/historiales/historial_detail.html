@@ -38,12 +38,13 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left text-xs font-bold uppercase text-secondary">
-                    <th class="py-2">Variable</th><th class="py-2">Valor</th><th class="py-2">Referencia</th><th class="py-2">Obs.</th>
+                    <th class="py-2">Examen</th><th class="py-2">Variable</th><th class="py-2">Valor</th><th class="py-2">Referencia</th><th class="py-2">Obs.</th>
                 </tr>
             </thead>
             <tbody>
                 {% for r in historial.resultados_lab.all %}
                 <tr class="border-t border-surface-container-low">
+                    <td class="py-2 text-secondary">{{ r.get_tipo_examen_display }}</td>
                     <td class="py-2">{{ r.nombre_variable }}</td>
                     <td class="py-2">{{ r.valor }} {{ r.unidad }}</td>
                     <td class="py-2 text-outline">{{ r.valor_referencia|default:"—" }}</td>

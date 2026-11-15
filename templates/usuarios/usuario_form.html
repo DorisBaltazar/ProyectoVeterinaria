@@ -42,12 +42,14 @@
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Contraseña</label>
             {{ form.password1 }}
+            {% if form.password1.errors %}{% for e in form.password1.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}{% endif %}
         </div>
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Confirmar contraseña</label>
             {{ form.password2 }}
         </div>
         {% if form.password2.errors %}<p class="text-error text-sm col-span-2">{{ form.password2.errors.0 }}</p>{% endif %}
+        <p class="text-xs text-outline col-span-2">Mínimo 8 caracteres, que no sea solo números ni una clave muy común.</p>
     </div>
     {% else %}
     <label class="flex items-center gap-2 text-sm font-medium">

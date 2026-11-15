@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Reportes - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><span class="text-secondary">Reportes</span>{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Reportes</h2>
+<p class="text-secondary text-sm mb-6">Información de pacientes y de la clínica. Cada reporte se puede ver en pantalla, imprimir / guardar como PDF y exportar a Excel (CSV).</p>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-5xl">
+    {% for clave, d in reportes %}
+    <a href="{% url 'reportes:reporte' clave %}" class="bg-white rounded-2xl p-6 hover:shadow-md transition block">
+        <span class="material-symbols-outlined text-primary text-3xl">{{ d.icono }}</span>
+        <h3 class="font-headline font-bold text-lg mt-2">{{ d.titulo }}</h3>
+        <p class="text-secondary text-sm mt-1">{{ d.descripcion }}</p>
+    </a>
+    {% endfor %}
+    {% if ver_ia %}
+    <a href="{% url 'diagnostico:reporte' %}" class="bg-white rounded-2xl p-6 hover:shadow-md transition block">
+        <span class="material-symbols-outlined text-primary text-3xl">monitoring</span>
+        <h3 class="font-headline font-bold text-lg mt-2">Resumen del módulo de IA</h3>
+        <p class="text-secondary text-sm mt-1">Distribución de diagnósticos y precisión percibida del modelo.</p>
+    </a>
+    {% endif %}
+</div>
+<p class="text-secondary text-sm mt-6">La ficha clínica de cada paciente se exporta desde su página de detalle (botón «Ficha / Exportar»).</p>
+{% endblock %}

@@ -5,12 +5,14 @@
 from django.contrib import messages
 from django.db import models
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 
 from usuarios.bitacora import registrar_bitacora
 from usuarios.mixins import RolRequeridoMixin
 
-from .forms import MascotaForm, PropietarioForm
+from .forms import AlertaMedicaForm, MascotaForm, PesoForm, PropietarioForm
+from .grafico_peso import datos_grafico
 from .models import Mascota, Propietario
 
 ROLES_LECTURA = ["ADMIN", "VET", "RECEP"]
@@ -101,6 +103,18 @@ class MascotaDetailView(RolRequeridoMixin, DetailView):
     template_name = "pacientes/mascota_detail.html"
     context_object_name = "mascota"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        mascota = self.object
+        pesos = list(mascota.pesos.order_by("fecha", "id"))
+        context["peso_actual"] = pesos[-1].peso_kg if pesos else mascota.peso_kg
+        context["grafico_peso"] = datos_grafico(pesos)
+        variacion = mascota.variacion_peso()
+        if variacion:
+            context["variacion_peso"], context["variacion_desde"] = variacion
+        context["num_pesajes"] = len(pesos)
+        return context
+
 
 class MascotaCreateView(RolRequeridoMixin, CreateView):
     model = Mascota
@@ -110,6 +124,8 @@ class MascotaCreateView(RolRequeridoMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        if self.object.peso_kg is not None:
+            self.object.registrar_peso(self.object.peso_kg, usuario=self.request.user)
         registrar_bitacora(self.request.user, "Registró mascota", str(self.object))
         messages.success(self.request, "Mascota registrada correctamente.")
         return response
@@ -123,6 +139,10 @@ class MascotaUpdateView(RolRequeridoMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        if self.object.peso_kg is not None and (
+            "peso_kg" in form.changed_data or not self.object.pesos.exists()
+        ):
+            self.object.registrar_peso(self.object.peso_kg, usuario=self.request.user)
         registrar_bitacora(self.request.user, "Editó mascota", str(self.object))
         messages.success(self.request, "Datos de la mascota actualizados.")
         return response
@@ -138,3 +158,60 @@ class MascotaDeleteView(RolRequeridoMixin, DeleteView):
         registrar_bitacora(self.request.user, "Eliminó mascota", str(self.object))
         messages.success(self.request, "Mascota eliminada.")
         return super().form_valid(form)
+
+
+
+class _MascotaDeLaUrlMixin:
+    """Carga la mascota indicada en la URL para las vistas de peso y alerta."""
+
+    def dispatch(self, request, *args, **kwargs):
+        self.mascota = get_object_or_404(Mascota, pk=kwargs["pk"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["mascota"] = self.mascota
+        return context
+
+
+class PesoCreateView(_MascotaDeLaUrlMixin, RolRequeridoMixin, FormView):
+    """'Pesar hoy': registra un nuevo pesaje y actualiza la curva de peso."""
+
+    roles_permitidos = ROLES_LECTURA  # cualquier miembro del personal puede pesar
+    form_class = PesoForm
+    template_name = "pacientes/peso_form.html"
+
+    def get_initial(self):
+        from datetime import date
+        return {"fecha": date.today()}
+
+    def form_valid(self, form):
+        self.mascota.registrar_peso(
+            form.cleaned_data["peso_kg"], fecha=form.cleaned_data["fecha"], usuario=self.request.user,
+        )
+        registrar_bitacora(
+            self.request.user, "Registró peso",
+            f"{self.mascota.nombre}: {form.cleaned_data['peso_kg']} kg",
+        )
+        messages.success(self.request, "Peso registrado.")
+        return redirect("pacientes:detalle", pk=self.mascota.pk)
+
+
+class AlertaMedicaUpdateView(_MascotaDeLaUrlMixin, RolRequeridoMixin, FormView):
+    """Añadir, editar o quitar la alerta médica de una mascota."""
+
+    roles_permitidos = ROLES_LECTURA
+    form_class = AlertaMedicaForm
+    template_name = "pacientes/alerta_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"] = self.mascota
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        accion = "Actualizó alerta médica" if self.mascota.alerta_medica else "Quitó alerta médica"
+        registrar_bitacora(self.request.user, accion, str(self.mascota))
+        messages.success(self.request, "Alerta médica guardada." if self.mascota.alerta_medica else "Alerta médica eliminada.")
+        return redirect("pacientes:detalle", pk=self.mascota.pk)

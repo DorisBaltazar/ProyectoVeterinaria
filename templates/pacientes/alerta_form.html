@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Alerta médica - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'pacientes:lista' %}" class="hover:underline">Pacientes</a><span>›</span><a href="{% url 'pacientes:detalle' mascota.pk %}" class="hover:underline">{{ mascota.nombre }}</a><span>›</span><span class="text-secondary">Alerta médica</span>{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Alerta médica</h2>
+<p class="text-secondary text-sm mb-6">{{ mascota.nombre }} — aviso importante para todo el personal. Déjala vacía para quitarla.</p>
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
+    {% csrf_token %}
+    {{ form.alerta_medica }}
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        <a href="{% url 'pacientes:detalle' mascota.pk %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

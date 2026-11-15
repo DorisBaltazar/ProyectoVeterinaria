@@ -1,6 +1,8 @@
+from .catalogo_lab import TIPOS_CHOICES
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from config import validadores as val
 
 
 class HistorialClinico(models.Model):
@@ -39,8 +41,10 @@ class HistorialClinico(models.Model):
         help_text="Detalle de medicamento, dosis e indicaciones (usado para la receta digital).",
     )
 
-    peso_kg = models.DecimalField("Peso registrado (kg)", max_digits=5, decimal_places=2, null=True, blank=True)
-    temperatura_c = models.DecimalField("Temperatura (°C)", max_digits=4, decimal_places=1, null=True, blank=True)
+    peso_kg = models.DecimalField("Peso registrado (kg)", max_digits=5, decimal_places=2, null=True, blank=True,
+                                  validators=val.peso_validators())
+    temperatura_c = models.DecimalField("Temperatura (°C)", max_digits=4, decimal_places=1, null=True, blank=True,
+                                         validators=val.temperatura_validators())
     observaciones = models.TextField(blank=True)
 
     fecha_proximo_control = models.DateField("Fecha sugerida de próximo control", null=True, blank=True)
@@ -74,11 +78,15 @@ class ResultadoLaboratorio(models.Model):
     historial = models.ForeignKey(
         HistorialClinico, on_delete=models.CASCADE, related_name="resultados_lab"
     )
+    tipo_examen = models.CharField(
+        "Tipo de examen", max_length=20, choices=TIPOS_CHOICES, default="OTRO",
+        help_text="Tipo de laboratorio al que pertenece el resultado.",
+    )
     nombre_variable = models.CharField(
         "Variable / examen", max_length=100,
         help_text="Ej: Hematocrito, Glóbulos blancos, Glucosa.",
     )
-    valor = models.DecimalField(max_digits=10, decimal_places=3)
+    valor = models.DecimalField(max_digits=10, decimal_places=3, validators=[val.no_negativo()])
     unidad = models.CharField(max_length=20, blank=True, help_text="Ej: %, mg/dL, x10^3/µL")
     valor_referencia = models.CharField(
         "Rango de referencia", max_length=50, blank=True,
@@ -90,7 +98,7 @@ class ResultadoLaboratorio(models.Model):
     class Meta:
         verbose_name = "Resultado de laboratorio"
         verbose_name_plural = "Resultados de laboratorio"
-        ordering = ["nombre_variable"]
+        ordering = ["tipo_examen", "nombre_variable"]
 
     def __str__(self):
         return f"{self.nombre_variable}: {self.valor} {self.unidad}"

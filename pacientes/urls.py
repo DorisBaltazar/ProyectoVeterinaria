@@ -11,6 +11,8 @@ urlpatterns = [
     path("<int:pk>/", views.MascotaDetailView.as_view(), name="detalle"),
     path("<int:pk>/editar/", views.MascotaUpdateView.as_view(), name="editar"),
     path("<int:pk>/eliminar/", views.MascotaDeleteView.as_view(), name="eliminar"),
+    path("<int:pk>/peso/", views.PesoCreateView.as_view(), name="peso"),
+    path("<int:pk>/alerta/", views.AlertaMedicaUpdateView.as_view(), name="alerta"),
     # RF-02: propietarios (buscar y editar)
     path("propietarios/", views.PropietarioListView.as_view(), name="propietarios"),
     path("propietario/nuevo/", views.PropietarioCreateView.as_view(), name="propietario_crear"),

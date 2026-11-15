@@ -9,7 +9,7 @@
     </div>
     <div class="flex gap-2">
         <a href="{% url 'inventario:movimientos' %}" class="bg-white px-5 py-3 rounded-xl font-medium text-sm text-secondary">Ver movimientos</a>
-        {% if perfil.rol == "ADMIN" or perfil.rol == "VET" %}
+        {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or user.is_superuser %}
         <a href="{% url 'inventario:movimiento_crear' %}" class="bg-teal-50 text-primary px-5 py-3 rounded-xl font-medium text-sm inline-flex items-center gap-1">
             <span class="material-symbols-outlined text-lg">sync_alt</span> Registrar movimiento
         </a>

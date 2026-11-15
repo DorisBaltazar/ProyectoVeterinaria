@@ -54,7 +54,7 @@ class CitaFlujoPorRolTests(TestCase):
     def test_recepcionista_puede_crear_citas(self):
         self.client.login(username="recep_c", password="clave12345")
         response = self.client.post("/citas/nueva/", {
-            "propietario_nombre": "Ana Diaz", "propietario_telefono": "700",
+            "propietario_nombre": "Ana Diaz", "propietario_telefono": "70012345",
             "mascota_nombre": "Luna", "especie": "GATO",
             "fecha": date.today().isoformat(), "hora": "11:00", "motivo": "Control",
             "veterinario": self.vet.pk, "estado": "PENDIENTE", "observaciones": "",

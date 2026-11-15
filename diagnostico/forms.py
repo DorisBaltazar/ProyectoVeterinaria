@@ -1,5 +1,7 @@
 from django import forms
 
+from config.validadores import LimitesHtmlMixin
+
 from pacientes.models import Mascota
 
 from .models import DiagnosticoIA
@@ -28,7 +30,7 @@ SINTOMAS_LABELS = {
 }
 
 
-class DiagnosticoForm(forms.ModelForm):
+class DiagnosticoForm(LimitesHtmlMixin, forms.ModelForm):
     mascota = forms.ModelChoiceField(
         queryset=Mascota.objects.filter(activo=True).select_related("propietario"),
         widget=forms.Select(attrs={"class": INPUT_CLASS}),

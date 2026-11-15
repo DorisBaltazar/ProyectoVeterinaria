@@ -104,7 +104,7 @@
                     <span class="material-symbols-outlined">description</span> Historial
                 </a>
                 {% if perfil.rol == "VET" or user.is_superuser %}
-                <a href="{% url 'diagnostico:lista' %}" class="nav-item {% if '/diagnostico' in request.path and 'reporte' not in request.path %}active{% endif %}">
+                <a href="{% url 'diagnostico:lista' %}" class="nav-item {% if '/diagnostico' in request.path  %}active{% endif %}">
                     <span class="material-symbols-outlined">neurology</span> IA Diagnóstico
                 </a>
                 {% endif %}
@@ -113,11 +113,9 @@
                     <span class="material-symbols-outlined">inventory_2</span> Inventario
                 </a>
                 {% endif %}
-                {% if perfil.rol == "ADMIN" or perfil.rol == "VET" or user.is_superuser %}
-                <a href="{% url 'diagnostico:reporte' %}" class="nav-item {% if 'reporte' in request.path %}active{% endif %}">
+                <a href="{% url 'reportes:index' %}" class="nav-item {% if 'reportes' in request.path or 'diagnostico/reporte' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">monitoring</span> Reportes
                 </a>
-                {% endif %}
                 {% if perfil.rol == "ADMIN" or user.is_superuser %}
                 <div class="my-3 border-t border-white/10"></div>
                 <a href="{% url 'usuarios:usuarios_lista' %}" class="nav-item {% if 'usuarios/usuarios' in request.path or 'usuarios/nuevo' in request.path or 'editar' in request.path and 'usuarios' in request.path %}active{% endif %}">
@@ -188,5 +186,40 @@
     {% else %}
         {% block content_public %}{% endblock %}
     {% endif %}
+    <script>
+        // Marca con (*) los campos obligatorios de cada formulario de carga de datos
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("main form[method=post], main form[method=POST]").forEach(function (form) {
+                let hay = false;
+                form.querySelectorAll("input[required], select[required], textarea[required]").forEach(function (campo) {
+                    if (campo.type === "hidden" || campo.type === "file" || campo.type === "checkbox") return;
+                    hay = true;
+                    let nodo = campo.parentElement, etiqueta = null;
+                    while (nodo && nodo !== form) {
+                        etiqueta = Array.from(nodo.children).find(function (h) { return h.tagName === "LABEL"; });
+                        if (etiqueta) break;
+                        nodo = nodo.parentElement;
+                    }
+                    if (etiqueta) {
+                        if (!etiqueta.querySelector(".marca-obligatorio")) {
+                            const marca = document.createElement("span");
+                            marca.className = "marca-obligatorio text-error font-bold";
+                            marca.textContent = " *";
+                            marca.title = "Campo obligatorio";
+                            etiqueta.appendChild(marca);
+                        }
+                    } else if (campo.placeholder && !campo.placeholder.endsWith("*")) {
+                        campo.placeholder += " *";
+                    }
+                });
+                if (hay && !form.querySelector(".leyenda-obligatorio")) {
+                    const nota = document.createElement("p");
+                    nota.className = "leyenda-obligatorio text-xs text-outline";
+                    nota.innerHTML = '<span class="text-error font-bold">(*)</span> Campo obligatorio';
+                    form.prepend(nota);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

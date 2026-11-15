@@ -13,6 +13,16 @@
         <div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Motivo</p><p class="font-medium">{{ cita.motivo }}</p></div>
         {% if cita.observaciones %}<div class="col-span-2"><p class="text-outline text-xs uppercase font-bold">Observaciones</p><p class="font-medium">{{ cita.observaciones }}</p></div>{% endif %}
     </div>
+    {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or perfil.rol == "VET" %}
+    <form method="post" action="{% url 'citas:estado' cita.pk %}" class="flex flex-wrap items-center gap-2 mb-6">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <span class="text-outline text-xs uppercase font-bold mr-1">Cambiar estado:</span>
+        {% for valor, etiqueta in cita.Estado.choices %}{% if valor != cita.estado %}
+        <button type="submit" name="estado" value="{{ valor }}" class="bg-surface-container-highest hover:bg-surface-container-high px-3 py-1.5 rounded-lg text-xs font-semibold transition">{{ etiqueta }}</button>
+        {% endif %}{% endfor %}
+    </form>
+    {% endif %}
     <div class="flex gap-3">
         {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or perfil.rol == "VET" %}
         <a href="{% url 'citas:editar' cita.pk %}" class="bg-surface-container-highest px-5 py-2.5 rounded-xl font-medium text-sm">Editar</a>

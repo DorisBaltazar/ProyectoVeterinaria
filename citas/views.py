@@ -1,7 +1,9 @@
 # Create your views here.
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from usuarios.bitacora import registrar_bitacora
@@ -84,3 +86,30 @@ class CitaDeleteView(RolRequeridoMixin, DeleteView):
         registrar_bitacora(self.request.user, "Eliminó cita", str(self.object))
         messages.success(self.request, "Cita eliminada.")
         return super().form_valid(form)
+
+
+class CitaCambiarEstadoView(RolRequeridoMixin, View):
+    """Cambio rápido de estado desde el listado o el detalle (sin abrir el formulario)."""
+
+    roles_permitidos = ROLES_ACTUALIZACION
+    http_method_names = ["post"]
+
+    def post(self, request, pk):
+        cita = get_object_or_404(Cita, pk=pk)
+        nuevo = request.POST.get("estado")
+        if nuevo not in Cita.Estado.values:
+            messages.error(request, "Estado no válido.")
+        elif nuevo == Cita.Estado.PENDIENTE and cita.estado != nuevo:
+            # Volver a Pendiente implica reprogramar: se abre el formulario para elegir fecha y hora
+            messages.info(request, "Elige la nueva fecha y hora para dejar la cita como pendiente.")
+            return redirect("citas:editar", pk=cita.pk)
+        elif nuevo != cita.estado:
+            anterior = cita.get_estado_display()
+            cita.estado = nuevo
+            cita.save(update_fields=["estado", "fecha_actualizacion"])
+            registrar_bitacora(request.user, "Cambió estado de cita", f"{cita} (antes: {anterior})")
+            messages.success(request, f"Estado actualizado a {cita.get_estado_display()}.")
+        siguiente = request.POST.get("next", "")
+        if siguiente.startswith("/") and not siguiente.startswith("//"):
+            return redirect(siguiente)
+        return redirect("citas:lista")

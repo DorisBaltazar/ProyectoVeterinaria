@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'historiales',
     'inventario',
     'pacientes',
+    'reportes',
     'usuarios',
 ]
 
@@ -94,6 +95,11 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+
+# Inicio de sesión con usuario (sin distinguir mayúsculas) o correo
+AUTHENTICATION_BACKENDS = [
+    'usuarios.backends.UsuarioOCorreoBackend',
+]
 
 AUTH_PASSWORD_VALIDATORS = [
     {

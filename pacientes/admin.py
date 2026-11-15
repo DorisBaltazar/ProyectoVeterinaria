@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Mascota, Propietario
+from .models import Mascota, Propietario, RegistroPeso
 
 
 @admin.register(Propietario)
@@ -15,3 +15,10 @@ class MascotaAdmin(admin.ModelAdmin):
     list_display = ("nombre", "especie", "raza", "propietario", "activo")
     list_filter = ("especie", "sexo", "activo")
     search_fields = ("nombre", "propietario__nombre_completo")
+
+
+
+@admin.register(RegistroPeso)
+class RegistroPesoAdmin(admin.ModelAdmin):
+    list_display = ("mascota", "fecha", "peso_kg")
+    list_filter = ("fecha",)

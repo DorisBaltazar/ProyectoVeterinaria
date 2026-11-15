@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load l10n %}
 {% block title %}{{ mascota.nombre }} - Clínica CIAC{% endblock %}
 {% block breadcrumb %}<span>›</span><a href="{% url 'pacientes:lista' %}" class="hover:underline">Pacientes</a><span>›</span><span class="text-secondary">Detalle</span>{% endblock %}
 {% block content %}
@@ -24,8 +25,67 @@
         <div><p class="text-outline text-xs uppercase font-bold">Propietario</p><p class="font-medium">{{ mascota.propietario.nombre_completo }}</p></div>
         <div><p class="text-outline text-xs uppercase font-bold">CI del propietario</p><p class="font-medium font-mono">{{ mascota.propietario.ci }}</p></div>
         <div><p class="text-outline text-xs uppercase font-bold">Teléfono</p><p class="font-medium">{{ mascota.propietario.telefono }}</p></div>
-        <div><p class="text-outline text-xs uppercase font-bold">Edad aproximada</p><p class="font-medium">{% if mascota.edad_aproximada %}{{ mascota.edad_aproximada }} años{% else %}—{% endif %}</p></div>
-        <div><p class="text-outline text-xs uppercase font-bold">Peso</p><p class="font-medium">{% if mascota.peso_kg %}{{ mascota.peso_kg }} kg{% else %}—{% endif %}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Edad</p><p class="font-medium">{% if mascota.edad_texto %}{{ mascota.edad_texto }}{% else %}—{% endif %}</p></div>
+        <div><p class="text-outline text-xs uppercase font-bold">Peso actual</p><p class="font-medium">{% if peso_actual %}{{ peso_actual }} kg{% else %}—{% endif %}</p></div>
+    </div>
+
+
+    <!-- Alerta médica -->
+    {% if mascota.alerta_medica %}
+    <div class="flex items-start gap-3 rounded-2xl p-4 mb-6 bg-red-50 border border-red-100">
+        <span class="material-symbols-outlined text-red-700" style="font-variation-settings:'FILL' 1;">warning</span>
+        <div class="flex-1">
+            <p class="font-bold text-red-800 text-sm">Alerta médica</p>
+            <p class="text-red-900 text-sm whitespace-pre-line">{{ mascota.alerta_medica }}</p>
+        </div>
+        <a href="{% url 'pacientes:alerta' mascota.pk %}" class="text-red-800 text-xs font-semibold hover:underline">Editar</a>
+    </div>
+    {% else %}
+    <a href="{% url 'pacientes:alerta' mascota.pk %}" class="inline-flex items-center gap-1 text-primary text-sm font-semibold hover:underline mb-6">
+        <span class="material-symbols-outlined text-lg">add</span> Añadir alerta médica
+    </a>
+    {% endif %}
+
+    <!-- Control de peso -->
+    <div class="rounded-2xl p-5 mb-6 bg-surface-container-low/60 border border-surface-container-low">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <p class="text-outline text-xs uppercase font-bold">Peso</p>
+                <p class="font-headline text-3xl font-extrabold text-on-surface">
+                    {% if peso_actual %}{{ peso_actual }} <span class="text-base font-medium text-secondary">kg</span>{% else %}—{% endif %}
+                </p>
+                {% if variacion_peso is not None %}
+                <span class="inline-block mt-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-50 text-primary">
+                    {% if variacion_peso > 0 %}+{% endif %}{{ variacion_peso }} kg desde el {{ variacion_desde|date:"j b" }}
+                </span>
+                {% endif %}
+            </div>
+            <a href="{% url 'pacientes:peso' mascota.pk %}" class="bg-teal-50 text-primary px-4 py-2 rounded-xl font-semibold text-sm hover:bg-teal-100 transition">Pesar hoy</a>
+        </div>
+        {% if grafico_peso %}
+        {% localize off %}
+        <svg viewBox="0 0 {{ grafico_peso.ancho }} {{ grafico_peso.alto }}" class="w-full mt-4" role="img" aria-label="Evolución del peso de {{ mascota.nombre }}">
+            <defs>
+                <linearGradient id="peso-area" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0e7c7b" stop-opacity=".18"/><stop offset="100%" stop-color="#0e7c7b" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            {% for g in grafico_peso.guias %}
+            <line x1="{{ grafico_peso.izq }}" x2="{{ grafico_peso.der }}" y1="{{ g.y }}" y2="{{ g.y }}" stroke="#cfdede" stroke-dasharray="3 4"/>
+            <text x="{{ grafico_peso.izq|add:'-8' }}" y="{{ g.y|add:'4' }}" text-anchor="end" font-size="12" fill="#5f7a7b">{{ g.etiqueta }}</text>
+            {% endfor %}
+            <polygon points="{{ grafico_peso.area }}" fill="url(#peso-area)"/>
+            <polyline points="{{ grafico_peso.linea }}" fill="none" stroke="#0e7c7b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            {% for pt in grafico_peso.puntos %}
+            <circle cx="{{ pt.x }}" cy="{{ pt.y }}" r="5" fill="#fff" stroke="#0e7c7b" stroke-width="2.5"><title>{{ pt.fecha|date:"d/m/Y" }}: {{ pt.peso }} kg</title></circle>
+            {% endfor %}
+            <text x="{{ grafico_peso.izq }}" y="{{ grafico_peso.alto|add:'-8' }}" font-size="12" fill="#5f7a7b">{{ grafico_peso.fecha_inicio }}</text>
+            <text x="{{ grafico_peso.der }}" y="{{ grafico_peso.alto|add:'-8' }}" text-anchor="end" font-size="12" fill="#5f7a7b">{{ grafico_peso.fecha_fin }}</text>
+        </svg>
+        {% endlocalize %}
+        {% else %}
+        <p class="text-sm text-secondary mt-3">Con una medición más aparece la curva.</p>
+        {% endif %}
     </div>
 
     {% if mascota.notas %}
@@ -40,6 +100,7 @@
             <span class="material-symbols-outlined text-lg">description</span> Historial clínico
         </a>
         {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" %}
+        <a href="{% url 'reportes:ficha' mascota.pk %}" target="_blank" class="bg-teal-50 text-primary px-5 py-2.5 rounded-xl font-medium text-sm inline-flex items-center gap-1">Ficha / Exportar</a>
         <a href="{% url 'pacientes:editar' mascota.pk %}" class="bg-surface-container-highest px-5 py-2.5 rounded-xl font-medium text-sm">Editar</a>
         {% endif %}
         {% if perfil.rol == "ADMIN" %}

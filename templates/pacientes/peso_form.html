@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Registrar peso - Clínica CIAC{% endblock %}
+{% block breadcrumb %}<span>›</span><a href="{% url 'pacientes:lista' %}" class="hover:underline">Pacientes</a><span>›</span><a href="{% url 'pacientes:detalle' mascota.pk %}" class="hover:underline">{{ mascota.nombre }}</a><span>›</span><span class="text-secondary">Peso</span>{% endblock %}
+{% block content %}
+<h2 class="font-headline text-2xl font-extrabold text-primary mb-1">Registrar peso</h2>
+<p class="text-secondary text-sm mb-6">{{ mascota.nombre }}{% if mascota.peso_actual %} — último peso: {{ mascota.peso_actual }} kg{% endif %}</p>
+<form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-md">
+    {% csrf_token %}
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Peso (kg)</label>
+        {{ form.peso_kg }}
+        {% if form.peso_kg.errors %}<p class="text-error text-sm mt-1">{{ form.peso_kg.errors.0 }}</p>{% endif %}
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha del pesaje</label>
+        {{ form.fecha }}
+        {% if form.fecha.errors %}<p class="text-error text-sm mt-1">{{ form.fecha.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
+        <a href="{% url 'pacientes:detalle' mascota.pk %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

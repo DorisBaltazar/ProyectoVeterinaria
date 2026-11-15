@@ -8,7 +8,7 @@ from .models import Mascota, Propietario
 
 class PropietarioModelTests(TestCase):
     def test_no_permite_dos_propietarios_con_la_misma_ci(self):
-        Propietario.objects.create(ci="1234567", nombre_completo="Juan Perez", telefono="700")
+        Propietario.objects.create(ci="1234567", nombre_completo="Juan Perez", telefono="70012345")
         form = PropietarioForm(data={
             "ci": "1234567", "nombre_completo": "Otro Nombre",
             "telefono": "701", "correo": "", "direccion": "",
@@ -17,9 +17,9 @@ class PropietarioModelTests(TestCase):
         self.assertIn("ci", form.errors)
 
     def test_permite_editar_el_mismo_propietario_sin_marcar_error_de_duplicado(self):
-        propietario = Propietario.objects.create(ci="7654321", nombre_completo="Maria Lopez", telefono="700")
+        propietario = Propietario.objects.create(ci="7654321", nombre_completo="Maria Lopez", telefono="70012345")
         form = PropietarioForm(
-            data={"ci": "7654321", "nombre_completo": "Maria Lopez Editada", "telefono": "700", "correo": "", "direccion": ""},
+            data={"ci": "7654321", "nombre_completo": "Maria Lopez Editada", "telefono": "70012345", "correo": "", "direccion": ""},
             instance=propietario,
         )
         self.assertTrue(form.is_valid())
@@ -27,7 +27,7 @@ class PropietarioModelTests(TestCase):
 
 class MascotaModelTests(TestCase):
     def setUp(self):
-        self.propietario = Propietario.objects.create(ci="1111111", nombre_completo="Carlos Gomez", telefono="700")
+        self.propietario = Propietario.objects.create(ci="1111111", nombre_completo="Carlos Gomez", telefono="70012345")
 
     def test_codigo_se_genera_automaticamente_al_guardar(self):
         mascota = Mascota.objects.create(propietario=self.propietario, nombre="Rex", especie="PERRO")
@@ -52,7 +52,7 @@ class MascotaBusquedaViewTests(TestCase):
         self.admin = User.objects.create_user("admin_busq", password="clave12345")
         self.admin.perfil.rol = Perfil.Rol.ADMINISTRADOR
         self.admin.perfil.save()
-        self.propietario = Propietario.objects.create(ci="9998887", nombre_completo="Elena Rojas", telefono="700")
+        self.propietario = Propietario.objects.create(ci="9998887", nombre_completo="Elena Rojas", telefono="70012345")
         self.mascota = Mascota.objects.create(propietario=self.propietario, nombre="Firulais", especie="PERRO")
         self.client.login(username="admin_busq", password="clave12345")
 

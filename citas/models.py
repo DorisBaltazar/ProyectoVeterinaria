@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from config import validadores as val
 
 # Create your models here.
 
@@ -30,7 +31,8 @@ class Cita(models.Model):
         CANCELADA = "CANCELADA", "Cancelada"
 
     propietario_nombre = models.CharField("Nombre del propietario", max_length=120)
-    propietario_telefono = models.CharField("Teléfono", max_length=20, blank=True)
+    propietario_telefono = models.CharField("Teléfono", max_length=20, blank=True,
+                                            validators=[val.telefono_valido])
     mascota_nombre = models.CharField("Nombre de la mascota", max_length=80)
     especie = models.CharField(max_length=10, choices=Especie.choices, default=Especie.PERRO)
 

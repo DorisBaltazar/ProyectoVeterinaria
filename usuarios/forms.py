@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 
 from .models import Perfil
 
@@ -41,8 +42,8 @@ class UsuarioCreateForm(forms.ModelForm):
         }
 
     def clean_username(self):
-        username = self.cleaned_data["username"]
-        if User.objects.filter(username=username).exists():
+        username = self.cleaned_data["username"].strip()
+        if User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError("Ya existe un usuario con ese nombre de usuario.")
         return username
 
@@ -51,6 +52,12 @@ class UsuarioCreateForm(forms.ModelForm):
         p1, p2 = cleaned.get("password1"), cleaned.get("password2")
         if p1 and p2 and p1 != p2:
             self.add_error("password2", "Las contraseñas no coinciden.")
+        elif p1:
+            # misma política que el resto de Django (largo mínimo, no solo números, etc.)
+            try:
+                validate_password(p1, User(username=cleaned.get("username", ""), email=cleaned.get("email", "")))
+            except forms.ValidationError as e:
+                self.add_error("password1", e)
         return cleaned
 
     def save(self, commit=True):

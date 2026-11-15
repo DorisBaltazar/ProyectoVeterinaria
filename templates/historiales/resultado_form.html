@@ -6,16 +6,67 @@
 <p class="text-secondary text-sm mb-6">{{ historial.mascota.nombre }} — consulta del {{ historial.fecha_atencion|date:"d/m/Y" }}</p>
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
     {% csrf_token %}
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre_variable }}</div>
-    <div class="grid grid-cols-2 gap-4">
-        {{ form.valor }}
-        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.unidad }}</div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tipo de examen</label>
+        {{ form.tipo_examen }}
     </div>
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.valor_referencia }}</div>
-    <div class="bg-surface-container-highest rounded-xl p-1">{{ form.observacion }}</div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Variable que se ingresa</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre_variable }}</div>
+        <datalist id="lista-variables"></datalist>
+        <p class="text-xs text-outline mt-1" id="ayuda-variables">Elige el tipo de examen y se sugerirán las variables habituales.</p>
+        {% if form.nombre_variable.errors %}<p class="text-error text-sm mt-1">{{ form.nombre_variable.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Valor</label>
+            {{ form.valor }}
+            {% if form.valor.errors %}<p class="text-error text-sm mt-1">{{ form.valor.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Unidad</label>
+            <div class="bg-surface-container-highest rounded-xl p-1">{{ form.unidad }}</div>
+        </div>
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Rango de referencia (opcional)</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.valor_referencia }}</div>
+    </div>
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observación (opcional)</label>
+        <div class="bg-surface-container-highest rounded-xl p-1">{{ form.observacion }}</div>
+    </div>
     <div class="flex gap-3 pt-2">
         <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
         <a href="{% url 'historiales:detalle' historial.pk %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
     </div>
 </form>
+{{ catalogo_lab|json_script:"catalogo-lab" }}
+<script>
+    // Sugiere las variables propias de cada tipo de examen y completa la unidad
+    document.addEventListener("DOMContentLoaded", function () {
+        const catalogo = JSON.parse(document.getElementById("catalogo-lab").textContent);
+        const tipo = document.getElementById("id_tipo_examen");
+        const nombre = document.getElementById("id_nombre_variable");
+        const unidad = document.getElementById("id_unidad");
+        const lista = document.getElementById("lista-variables");
+        const ayuda = document.getElementById("ayuda-variables");
+        function cargar() {
+            const vars = catalogo[tipo.value] || [];
+            lista.innerHTML = "";
+            vars.forEach(function (v) {
+                const o = document.createElement("option"); o.value = v.nombre; lista.appendChild(o);
+            });
+            ayuda.textContent = vars.length
+                ? "Variables habituales: " + vars.map(function (v) { return v.nombre + (v.unidad ? " (" + v.unidad + ")" : ""); }).join(", ") + "."
+                : "Escribe el nombre de la variable y su unidad.";
+        }
+        nombre.addEventListener("change", function () {
+            const v = (catalogo[tipo.value] || []).find(function (x) { return x.nombre === nombre.value; });
+            if (v && !unidad.value) unidad.value = v.unidad;
+        });
+        tipo.addEventListener("change", cargar);
+        cargar();
+    });
+</script>
 {% endblock %}

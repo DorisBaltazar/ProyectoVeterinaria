@@ -1,7 +1,9 @@
 from django.conf import settings
+from django.core.validators import MaxValueValidator
 from django.db import models
 
 from pacientes.models import Mascota
+from config import validadores as val
 
 
 class DiagnosticoIA(models.Model):
@@ -23,10 +25,12 @@ class DiagnosticoIA(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
 
     # --- Variables de laboratorio (vectorización numérica) ---
-    edad_meses = models.PositiveIntegerField()
-    temperatura_c = models.DecimalField(max_digits=4, decimal_places=1)
-    leucocitos_mil_mm3 = models.DecimalField(max_digits=5, decimal_places=1)
-    hidratacion_pct = models.DecimalField(max_digits=5, decimal_places=1)
+    edad_meses = models.PositiveIntegerField(validators=[MaxValueValidator(360, message="La edad máxima es 360 meses (30 años).")])
+    temperatura_c = models.DecimalField(max_digits=4, decimal_places=1, validators=val.temperatura_validators())
+    leucocitos_mil_mm3 = models.DecimalField(max_digits=5, decimal_places=1,
+                                             validators=[val.no_negativo(), MaxValueValidator(500, message="Valor fuera de rango (máx. 500 mil/mm³).")])
+    hidratacion_pct = models.DecimalField(max_digits=5, decimal_places=1,
+                                         validators=[val.no_negativo(), MaxValueValidator(100, message="La hidratación no puede superar 100 %.")])
 
     # --- Catálogo taxonómico de síntomas (selectores discretos / booleanos) ---
     fiebre = models.BooleanField(default=False)

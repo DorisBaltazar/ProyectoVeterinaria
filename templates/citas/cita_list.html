@@ -52,6 +52,16 @@
                         {% else %}bg-surface-container-high text-secondary{% endif %}">
                         {{ cita.get_estado_display }}
                     </span>
+                    {% if perfil.rol == "ADMIN" or perfil.rol == "RECEP" or perfil.rol == "VET" %}
+                    <form method="post" action="{% url 'citas:estado' cita.pk %}" class="mt-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <select name="estado" onchange="this.form.submit()" aria-label="Cambiar estado" class="text-xs bg-surface-container-highest border-none rounded-lg py-1 pl-2 pr-7 focus:ring-2 focus:ring-primary/20">
+                            <option value="" disabled selected>Cambiar estado…</option>
+                            {% for valor, etiqueta in estados %}{% if valor != cita.estado %}<option value="{{ valor }}">{{ etiqueta }}</option>{% endif %}{% endfor %}
+                        </select>
+                    </form>
+                    {% endif %}
                 </td>
                 <td class="px-5 py-4">
                     <a href="{% url 'citas:detalle' cita.pk %}" class="text-primary font-semibold hover:underline">Ver</a>

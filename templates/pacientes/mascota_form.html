@@ -59,11 +59,24 @@
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha de nacimiento</label>
             {{ form.fecha_nacimiento }}
+            {% if form.fecha_nacimiento.errors %}<p class="text-error text-sm mt-1">{{ form.fecha_nacimiento.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">…o edad aproximada</label>
+            <div class="grid grid-cols-2 gap-2">{{ form.edad_anios }}{{ form.edad_meses }}</div>
+            <p class="text-xs text-outline mt-1">Úsala si no conoces la fecha exacta: años y meses.</p>
+            {% if form.edad_anios.errors %}<p class="text-error text-sm mt-1">{{ form.edad_anios.errors.0 }}</p>{% endif %}
+            {% if form.edad_meses.errors %}<p class="text-error text-sm mt-1">{{ form.edad_meses.errors.0 }}</p>{% endif %}
         </div>
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Peso (kg)</label>
             {{ form.peso_kg }}
         </div>
+    </div>
+
+    <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Alerta médica (opcional)</label>
+        {{ form.alerta_medica }}
     </div>
 
     <div>

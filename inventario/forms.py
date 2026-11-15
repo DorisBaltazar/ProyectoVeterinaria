@@ -1,12 +1,14 @@
 from django import forms
 
+from config.validadores import LimitesHtmlMixin
+
 from .models import Insumo, MovimientoInventario
 
 INPUT = "w-full bg-transparent border-none focus:ring-0 text-on-surface font-medium placeholder:text-slate-400"
 SELECT = "w-full bg-surface-container-highest border-none rounded-xl p-3 focus:ring-2 focus:ring-primary/20"
 
 
-class InsumoForm(forms.ModelForm):
+class InsumoForm(LimitesHtmlMixin, forms.ModelForm):
     class Meta:
         model = Insumo
         fields = ["nombre", "categoria", "unidad_medida", "stock_minimo", "precio_unitario", "activo"]
@@ -24,7 +26,7 @@ class InsumoForm(forms.ModelForm):
             del self.fields["activo"]
 
 
-class MovimientoInventarioForm(forms.ModelForm):
+class MovimientoInventarioForm(LimitesHtmlMixin, forms.ModelForm):
     class Meta:
         model = MovimientoInventario
         fields = ["insumo", "tipo", "cantidad", "motivo"]

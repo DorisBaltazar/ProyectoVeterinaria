@@ -38,19 +38,66 @@
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Veterinario asignado</label>
             {{ form.veterinario }}
         </div>
+        {% if form.estado %}
         <div>
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Estado</label>
             {{ form.estado }}
         </div>
+        {% else %}
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Estado</label>
+            <p class="px-3 py-3 text-sm text-secondary">Se crea como <strong>Pendiente</strong>. Podrás cambiarlo desde el listado.</p>
+        </div>
+        {% endif %}
         <div class="md:col-span-2">
             <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observaciones</label>
             {{ form.observaciones }}
         </div>
     </div>
+    {% if form.errors %}
+    <div class="bg-red-50 text-red-700 text-sm p-3 rounded-xl mt-4">
+        {% for campo in form %}{% for e in campo.errors %}<p>{{ campo.label }}: {{ e }}</p>{% endfor %}{% endfor %}
+        {% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+    </div>
+    {% endif %}
+    {% if form.estado %}
+    <p class="text-xs text-outline mt-4">La fecha y la hora solo se pueden cambiar cuando el estado es <strong>Pendiente</strong>. Si vuelves una cita a Pendiente, elige la nueva fecha y hora.</p>
+    {% endif %}
     <div class="flex gap-3 pt-6">
         <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>
         <a href="{% url 'citas:lista' %}" class="px-6 py-3 rounded-xl font-medium text-secondary hover:bg-surface-container-low transition">Cancelar</a>
     </div>
 </form>
-{% endblock %}
 
+{% if form.estado %}
+<script>
+    // Fecha y hora: solo editables con estado Pendiente (reprogramación)
+    document.addEventListener("DOMContentLoaded", function () {
+        const estado = document.getElementById("id_estado");
+        const fecha = document.getElementById("id_fecha");
+        const hora = document.getElementById("id_hora");
+        if (!estado || !fecha || !hora) return;
+        const original = {estado: estado.value, fecha: fecha.value, hora: hora.value};
+        function bloquear(si) {
+            [fecha, hora].forEach(function (el) {
+                el.readOnly = si;
+                el.classList.toggle("opacity-60", si);
+                el.classList.toggle("pointer-events-none", si);
+                el.tabIndex = si ? -1 : 0;
+            });
+        }
+        function actualizar() {
+            if (estado.value === "PENDIENTE") {
+                bloquear(false);
+                if (original.estado !== "PENDIENTE") { fecha.value = ""; hora.value = ""; }
+            } else {
+                bloquear(true);
+                fecha.value = original.fecha; hora.value = original.hora;
+            }
+        }
+        estado.addEventListener("change", actualizar);
+        actualizar();
+    });
+</script>
+{% endif %}
+{% endblock %}

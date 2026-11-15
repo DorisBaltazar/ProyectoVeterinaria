@@ -1,0 +1,8 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>{{ titulo }} - Clínica CIAC</title><style>body{font-family:Arial,sans-serif;color:#111;margin:24px;font-size:12px}h1{font-size:20px;margin:0}h2{font-size:14px;margin:18px 0 6px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:4px 6px;text-align:left;vertical-align:top}th{background:#e8f1f0}.meta{color:#555;margin:4px 0 12px}.res span{display:inline-block;margin-right:18px}.alerta{background:#fde8e8;border:1px solid #c33;padding:8px;margin:8px 0}.bar{margin-bottom:14px}@media print{.bar{display:none}}</style></head><body>
+<div class="bar"><button onclick="window.print()">Imprimir / Guardar como PDF</button></div>
+<h1>Clínica CIAC — {{ titulo }}</h1>
+<p class="meta">Generado el {{ generado|date:"d/m/Y H:i" }} por {{ usuario }}{% if filtros %} · Filtros: {{ filtros }}{% endif %}</p>
+<p class="res">{% for e, v in resultado.resumen %}<span><b>{{ e }}:</b> {{ v }}</span>{% endfor %}</p>
+<table><thead><tr>{% for c in resultado.columnas %}<th>{{ c }}</th>{% endfor %}</tr></thead><tbody>
+{% for fila in resultado.filas %}<tr>{% for v in fila %}<td>{{ v }}</td>{% endfor %}</tr>{% empty %}<tr><td colspan="{{ resultado.columnas|length }}">Sin registros.</td></tr>{% endfor %}
+</tbody></table></body></html>

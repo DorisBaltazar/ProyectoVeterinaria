@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.utils import timezone
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -85,6 +86,12 @@ class HistorialCreateView(RolRequeridoMixin, CreateView):
             if perfil and perfil.rol == "VET":
                 form.instance.veterinario = self.request.user
         response = super().form_valid(form)
+        if self.object.peso_kg is not None:
+            # el peso de la consulta también alimenta la curva de peso de la mascota
+            self.mascota.registrar_peso(
+                self.object.peso_kg, fecha=timezone.localtime(self.object.fecha_atencion).date(),
+                usuario=self.request.user,
+            )
         registrar_bitacora(self.request.user, "Registró historial clínico", str(self.object))
         messages.success(self.request, "Historial clínico registrado correctamente.")
         return response
@@ -157,8 +164,10 @@ class ResultadoLaboratorioCreateView(RolRequeridoMixin, CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        from .catalogo_lab import catalogo_para_js
         context = super().get_context_data(**kwargs)
         context["historial"] = self.historial
+        context["catalogo_lab"] = catalogo_para_js()
         return context
 
     def form_valid(self, form):
