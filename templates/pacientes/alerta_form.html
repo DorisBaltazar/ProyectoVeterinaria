@@ -6,7 +6,7 @@
 <p class="text-secondary text-sm mb-6">{{ mascota.nombre }} — aviso importante para todo el personal. Déjala vacía para quitarla.</p>
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
     {% csrf_token %}
-    <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Alerta médica</label>
+    <label for="{{ form.alerta_medica.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Alerta médica</label>
     {{ form.alerta_medica }}
     {% for e in form.alerta_medica.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     <div class="flex gap-3 pt-2">

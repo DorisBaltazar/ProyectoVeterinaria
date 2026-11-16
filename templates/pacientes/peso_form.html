@@ -7,12 +7,12 @@
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-md">
     {% csrf_token %}
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Peso (kg)</label>
+        <label for="{{ form.peso_kg.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Peso (kg)</label>
         {{ form.peso_kg }}
         {% if form.peso_kg.errors %}<p class="text-error text-sm mt-1">{{ form.peso_kg.errors.0 }}</p>{% endif %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha del pesaje</label>
+        <label for="{{ form.fecha.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha del pesaje</label>
         {{ form.fecha }}
         {% if form.fecha.errors %}<p class="text-error text-sm mt-1">{{ form.fecha.errors.0 }}</p>{% endif %}
     </div>

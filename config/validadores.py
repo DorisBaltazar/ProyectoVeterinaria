@@ -4,7 +4,7 @@ import re
 from decimal import Decimal
 
 from django import forms
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 PESO_MAX_KG = Decimal("200")
@@ -46,8 +46,8 @@ class LimitesHtmlMixin:
             if modelo is not None:
                 try:
                     validadores += modelo._meta.get_field(nombre).validators
-                except Exception:
-                    pass
+                except FieldDoesNotExist:  # campo del formulario que no existe en el modelo
+                    continue
             for v in validadores:
                 if isinstance(v, MinValueValidator):
                     campo.widget.attrs.setdefault("min", str(v.limit_value))

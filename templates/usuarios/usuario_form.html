@@ -10,7 +10,7 @@
 
     {% if not object %}
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Usuario (para iniciar sesión)</label>
+        <label for="{{ form.username.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Usuario (para iniciar sesión)</label>
         {{ form.username }}
         {% if form.username.errors %}<p class="text-error text-sm mt-1">{{ form.username.errors.0 }}</p>{% endif %}
     </div>
@@ -18,42 +18,42 @@
 
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombres</label>
+            <label for="{{ form.first_name.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombres</label>
             {{ form.first_name }}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Apellidos</label>
+            <label for="{{ form.last_name.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Apellidos</label>
             {{ form.last_name }}
         </div>
     </div>
 
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Correo electrónico</label>
+        <label for="{{ form.email.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Correo electrónico</label>
         {{ form.email }}
         {% for e in form.email.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
 
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Rol</label>
+        <label for="{{ form.rol.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Rol</label>
         {{ form.rol }}
     </div>
 
     {% if not object %}
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Contraseña</label>
+            <label for="{{ form.password1.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Contraseña</label>
             {{ form.password1 }}
             {% if form.password1.errors %}{% for e in form.password1.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}{% endif %}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Confirmar contraseña</label>
+            <label for="{{ form.password2.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Confirmar contraseña</label>
             {{ form.password2 }}
         </div>
         {% if form.password2.errors %}<p class="text-error text-sm col-span-2">{{ form.password2.errors.0 }}</p>{% endif %}
         <p class="text-xs text-outline col-span-2">Mínimo 8 caracteres, que no sea solo números ni una clave muy común.</p>
     </div>
     {% else %}
-    <label class="flex items-center gap-2 text-sm font-medium">
+    <label for="{{ form.is_active.id_for_label }}" class="flex items-center gap-2 text-sm font-medium">
         {{ form.is_active }} Usuario activo (puede iniciar sesión)
     </label>
     {% endif %}

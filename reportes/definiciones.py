@@ -3,10 +3,9 @@
 Cada reporte devuelve un diccionario con columnas, filas y un resumen, de
 modo que la misma información se puede ver en pantalla, imprimir/guardar
 como PDF y exportar a CSV (abre directo en Excel)."""
-from datetime import date, datetime, time
+from datetime import datetime, time
 
-from django.contrib.auth import get_user_model
-from django.db.models import Count, F, Sum
+from django.db.models import Count, F, Max, Sum
 from django.utils import timezone
 
 from citas.models import Cita
@@ -82,7 +81,8 @@ def _rango(f):
 
 # ------------------------------------------------------------------ pacientes
 def rep_pacientes(f):
-    qs = Mascota.objects.select_related("propietario").annotate(n_consultas=Count("historiales"))
+    qs = (Mascota.objects.select_related("propietario").prefetch_related("pesos")
+          .annotate(n_consultas=Count("historiales"), ultima_atencion=Max("historiales__fecha_atencion")))
     if f.get("especie"):
         qs = qs.filter(especie=f["especie"])
     if f.get("estado") == "activas":
@@ -90,21 +90,21 @@ def rep_pacientes(f):
     elif f.get("estado") == "inactivas":
         qs = qs.filter(activo=False)
     filas = []
-    for m in qs.order_by("nombre"):
-        ultima = m.historiales.order_by("-fecha_atencion").first()
+    mascotas = list(qs.order_by("nombre"))  # una sola consulta (sin N+1): pesos y última atención precargados
+    for m in mascotas:
+        pesos = list(m.pesos.all())  # ya ordenados por fecha en el modelo
+        peso = pesos[-1].peso_kg if pesos else m.peso_kg
         filas.append([
             m.codigo, m.nombre, m.get_especie_display(), m.raza, m.get_sexo_display(),
-            m.edad_texto or "", m.peso_actual if m.peso_actual is not None else "",
+            m.edad_texto or "", peso if peso is not None else "",
             m.propietario.nombre_completo, m.propietario.ci, m.propietario.telefono,
-            m.alerta_medica, m.n_consultas, _fmt_dt(ultima.fecha_atencion) if ultima else "",
+            m.alerta_medica, m.n_consultas, _fmt_dt(m.ultima_atencion),
             "Sí" if m.activo else "No",
         ])
     total = len(filas)
     con_alerta = sum(1 for r in filas if r[10])
-    def _rango_edad(txt):
-        return txt
     edades = []
-    for m in qs:
+    for m in mascotas:
         meses = m.edad_en_meses
         edades.append("Sin dato" if meses is None else "Menos de 1 año" if meses < 12 else
                       "1 a 3 años" if meses < 48 else "4 a 7 años" if meses < 96 else "8 años o más")
@@ -113,7 +113,7 @@ def rep_pacientes(f):
         grafico("Pacientes por sexo", _contar(r[4] for r in filas), "dona"),
         grafico("Pacientes por rango de edad", _contar(edades)),
         grafico("Razas más frecuentes", _contar((r[3] for r in filas), top=6)),
-        grafico("Registros nuevos por mes", _por_mes(m.fecha_registro for m in qs)),
+        grafico("Registros nuevos por mes", _por_mes(m.fecha_registro for m in mascotas)),
     ]
     por_especie = {}
     for r in filas:
@@ -144,7 +144,6 @@ def rep_citas(f):
     por_estado = {}
     for r in filas:
         por_estado[r[8]] = por_estado.get(r[8], 0) + 1
-    atendidas = por_estado.get("Atendida", 0)
     canceladas = por_estado.get("Cancelada", 0)
     graficos = [
         grafico("Citas por estado", _contar(r[8] for r in filas), "dona"),
@@ -171,10 +170,11 @@ def rep_atenciones(f):
         qs = qs.filter(fecha_atencion__lte=_dt(hasta, fin=True))
     if f.get("veterinario"):
         qs = qs.filter(veterinario_id=f["veterinario"])
+    qs = qs.order_by("-fecha_atencion")
     filas = [[_fmt_dt(h.fecha_atencion), h.mascota.codigo, h.mascota.nombre,
               h.mascota.propietario.nombre_completo, h.get_tipo_atencion_display(), h.motivo,
               h.diagnostico, h.tratamiento, h.peso_kg if h.peso_kg is not None else "",
-              _nombre(h.veterinario)] for h in qs.order_by("-fecha_atencion")]
+              _nombre(h.veterinario)] for h in qs]
     por_vet = {}
     for r in filas:
         por_vet[r[9] or "Sin asignar"] = por_vet.get(r[9] or "Sin asignar", 0) + 1
@@ -238,8 +238,9 @@ def rep_movimientos(f):
         qs = qs.filter(fecha__lte=_dt(hasta, fin=True))
     if f.get("tipo"):
         qs = qs.filter(tipo=f["tipo"])
+    qs = qs.order_by("-fecha")
     filas = [[_fmt_dt(m.fecha), m.insumo.nombre, m.get_tipo_display(), m.cantidad, m.insumo.unidad_medida,
-              m.motivo, _nombre(m.usuario)] for m in qs.order_by("-fecha")]
+              m.motivo, _nombre(m.usuario)] for m in qs]
     ent = qs.filter(tipo="ENTRADA").aggregate(t=Sum("cantidad"))["t"] or 0
     sal = qs.filter(tipo="SALIDA").aggregate(t=Sum("cantidad"))["t"] or 0
     graficos = [
@@ -266,9 +267,10 @@ def rep_ia(f):
         qs = qs.filter(fecha__lte=_dt(hasta, fin=True))
     if f.get("estado"):
         qs = qs.filter(retroalimentacion=f["estado"])
+    qs = qs.order_by("-fecha")
     filas = [[_fmt_dt(d.fecha), d.mascota.codigo, d.mascota.nombre, _nombre(d.veterinario), d.prediccion,
               f"{d.confianza}%", d.get_retroalimentacion_display(), d.diagnostico_real or ""]
-             for d in qs.order_by("-fecha")]
+             for d in qs]
     conf = sum(1 for d in qs if d.retroalimentacion == "CONFIRMADO")
     corr = sum(1 for d in qs if d.retroalimentacion == "CORREGIDO")
     confs = [float(d.confianza) for d in qs]

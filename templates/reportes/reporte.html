@@ -7,7 +7,7 @@
 
 <form method="get" class="bg-white rounded-2xl p-5 mb-5 flex flex-wrap items-end gap-4">
     {% for f in form %}
-    <div><label class="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">{{ f.label }}</label>{{ f }}
+    <div><label for="{{ f.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-secondary mb-1">{{ f.label }}</label>{{ f }}
         {% for e in f.errors %}<p class="text-red-700 text-xs mt-1">{{ e }}</p>{% endfor %}</div>
     {% endfor %}
     <button type="submit" class="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm">Generar</button>

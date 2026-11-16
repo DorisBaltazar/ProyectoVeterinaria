@@ -260,10 +260,14 @@ class SesionTests(BaseCorrecciones):
     def test_ses01_cerrar_sesion_va_a_la_pagina_principal_y_bloquea_el_panel(self):
         self.entrar(self.admin)
         r = self.client.post("/logout/")
-        self.assertRedirects(r, "/", fetch_redirect_response=False)
+        self.assertRedirects(r, "/login/", fetch_redirect_response=False)
         r = self.client.get("/panel/")
         self.assertEqual(r.status_code, 302)
         self.assertIn("/login/", r["Location"])
+
+    def test_ses03_login_envia_atras_a_la_pagina_principal(self):
+        r = self.client.get("/login/")
+        self.assertContains(r, "popstate")
 
     def test_ses02_paginas_con_sesion_no_se_guardan_en_cache(self):
         self.entrar(self.admin)

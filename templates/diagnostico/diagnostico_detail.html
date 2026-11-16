@@ -79,15 +79,15 @@
         <form method="post" action="{% url 'diagnostico:feedback' diagnostico.pk %}" class="space-y-4">
             {% csrf_token %}
             <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.retroalimentacion.label }}</label>
+                <label for="{{ feedback_form.retroalimentacion.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.retroalimentacion.label }}</label>
                 {{ feedback_form.retroalimentacion }}
             </div>
             <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.diagnostico_real.label }}</label>
+                <label for="{{ feedback_form.diagnostico_real.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.diagnostico_real.label }}</label>
                 {{ feedback_form.diagnostico_real }}
             </div>
             <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.observaciones_feedback.label }}</label>
+                <label for="{{ feedback_form.observaciones_feedback.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">{{ feedback_form.observaciones_feedback.label }}</label>
                 {{ feedback_form.observaciones_feedback }}
             </div>
             <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold px-5 py-3 rounded-xl hover:scale-[1.01] transition shadow">

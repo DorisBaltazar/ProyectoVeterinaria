@@ -9,15 +9,15 @@
     <div class="bg-red-50 text-red-700 text-sm p-3 rounded-xl">{{ form.non_field_errors.0 }}</div>
     {% endif %}
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Insumo</label>
+        <label for="{{ form.insumo.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Insumo</label>
         {{ form.insumo }}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tipo de movimiento</label>
+        <label for="{{ form.tipo.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tipo de movimiento</label>
         {{ form.tipo }}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Cantidad</label>
+        <label for="{{ form.cantidad.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Cantidad</label>
         {{ form.cantidad }}
     </div>
     <div class="bg-surface-container-highest rounded-xl p-1">{{ form.motivo }}</div>

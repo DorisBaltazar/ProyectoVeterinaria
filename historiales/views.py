@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from usuarios.bitacora import registrar_bitacora
 from usuarios.mixins import RolRequeridoMixin

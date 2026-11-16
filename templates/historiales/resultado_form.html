@@ -7,11 +7,11 @@
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
     {% csrf_token %}
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tipo de examen</label>
+        <label for="{{ form.tipo_examen.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Tipo de examen</label>
         {{ form.tipo_examen }}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Variable que se ingresa</label>
+        <label for="{{ form.nombre_variable.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Variable que se ingresa</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre_variable }}</div>
         <datalist id="lista-variables"></datalist>
         <p class="text-xs text-outline mt-1" id="ayuda-variables">Elige el tipo de examen y se sugerirán las variables habituales.</p>
@@ -19,21 +19,21 @@
     </div>
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Valor</label>
+            <label for="{{ form.valor.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Valor</label>
             {{ form.valor }}
             {% if form.valor.errors %}<p class="text-error text-sm mt-1">{{ form.valor.errors.0 }}</p>{% endif %}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Unidad</label>
+            <label for="{{ form.unidad.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Unidad</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.unidad }}</div>
         </div>
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Rango de referencia (opcional)</label>
+        <label for="{{ form.valor_referencia.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Rango de referencia (opcional)</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.valor_referencia }}</div>
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observación (opcional)</label>
+        <label for="{{ form.observacion.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observación (opcional)</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.observacion }}</div>
     </div>
     <div class="flex gap-3 pt-2">

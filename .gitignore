@@ -7,3 +7,7 @@ media/
 staticfiles/
 *.log
 .vscode/
+.coverage
+coverage.xml
+.scannerwork/
+.ruff_cache/

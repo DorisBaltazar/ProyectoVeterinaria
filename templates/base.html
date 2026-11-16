@@ -44,7 +44,7 @@
         /* ===== Barra lateral oscura ===== */
         .sidebar { background: linear-gradient(180deg, #00383a 0%, #002a2d 100%); position: relative; overflow: hidden; }
         .sidebar::after {            /* huella decorativa */
-            content: "pets"; font-family: 'Material Symbols Outlined'; font-size: 11rem; line-height: 1;
+            content: "pets"; font-family: 'Material Symbols Outlined', sans-serif; font-size: 11rem; line-height: 1;
             position: absolute; right: -2.2rem; bottom: 3.5rem; color: rgba(125, 245, 245, .06); pointer-events: none;
             transform: rotate(18deg);
         }
@@ -162,7 +162,8 @@
                 </div>
                 <form method="get" action="{% url 'pacientes:lista' %}" class="hidden md:flex items-center gap-3 bg-surface-container-low rounded-full px-5 py-2.5 w-full max-w-xl">
                     <span class="material-symbols-outlined text-primary">search</span>
-                    <input type="search" name="q" placeholder="Buscar paciente, propietario o código..."
+                    <label for="busqueda-global" class="sr-only">Buscar paciente, propietario o código</label>
+                    <input type="search" id="busqueda-global" name="q" placeholder="Buscar paciente, propietario o código..."
                            class="bg-transparent border-none focus:ring-0 p-0 w-full text-sm placeholder:text-outline">
                 </form>
                 <div class="flex items-center gap-4 ml-auto">

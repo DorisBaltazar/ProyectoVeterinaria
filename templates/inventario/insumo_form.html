@@ -8,27 +8,27 @@
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
     {% csrf_token %}
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre del insumo</label>
+        <label for="{{ form.nombre.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre del insumo</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre }}</div>
         {% for e in form.nombre.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Categoría</label>
+        <label for="{{ form.categoria.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Categoría</label>
         {{ form.categoria }}
         {% for e in form.categoria.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Unidad de medida (ej: kg, ml, caja, unidad)</label>
+        <label for="{{ form.unidad_medida.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Unidad de medida (ej: kg, ml, caja, unidad)</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.unidad_medida }}</div>
         {% for e in form.unidad_medida.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Stock mínimo (para alertas)</label>
+        <label for="{{ form.stock_minimo.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Stock mínimo (para alertas)</label>
         {{ form.stock_minimo }}
         {% for e in form.stock_minimo.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Precio unitario en Bs (opcional)</label>
+        <label for="{{ form.precio_unitario.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Precio unitario en Bs (opcional)</label>
         {{ form.precio_unitario }}
         {% for e in form.precio_unitario.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
@@ -38,7 +38,7 @@
         desde "Registrar movimiento" para cargar el stock inicial.
     </p>
     {% else %}
-    <label class="flex items-center gap-2 text-sm font-medium">{{ form.activo }} Insumo activo</label>
+    <label for="{{ form.activo.id_for_label }}" class="flex items-center gap-2 text-sm font-medium">{{ form.activo }} Insumo activo</label>
     {% endif %}
     <div class="flex gap-3 pt-2">
         <button type="submit" class="bg-gradient-to-r from-primary to-primary-container text-white font-bold px-6 py-3 rounded-xl shadow hover:scale-[1.02] transition">Guardar</button>

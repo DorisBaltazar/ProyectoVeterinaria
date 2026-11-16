@@ -23,10 +23,11 @@
 </div>
 
 <form method="get" class="flex flex-wrap gap-3 mb-6">
-    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Buscar insumo..."
+    <label for="buscar-insumo" class="sr-only">Buscar insumo</label>
+    <input type="text" id="buscar-insumo" name="q" value="{{ request.GET.q }}" placeholder="Buscar insumo..."
            class="flex-1 min-w-[220px] bg-white rounded-xl px-4 py-3 border-none focus:ring-2 focus:ring-primary/20">
-    <label class="flex items-center gap-2 bg-white rounded-xl px-4 py-3 text-sm font-medium">
-        <input type="checkbox" name="alerta" value="1" {% if request.GET.alerta %}checked{% endif %} onchange="this.form.submit()">
+    <label for="filtro-alerta" class="flex items-center gap-2 bg-white rounded-xl px-4 py-3 text-sm font-medium">
+        <input type="checkbox" id="filtro-alerta" name="alerta" value="1" {% if request.GET.alerta %}checked{% endif %} onchange="this.form.submit()">
         Solo con stock bajo {% if total_alertas %}<span class="text-amber-600 font-bold">({{ total_alertas }})</span>{% endif %}
     </label>
 </form>

@@ -58,7 +58,7 @@ def csrf_fallo(request, reason=""):
 
 
 class LogoutUsuarioView(LogoutView):
-    next_page = "usuarios:landing"
+    next_page = "usuarios:login"
 
 
 class DashboardView(RolRequeridoMixin, TemplateView):

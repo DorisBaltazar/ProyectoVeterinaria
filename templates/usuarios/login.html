@@ -53,4 +53,13 @@
         <p class="text-center text-white/70 text-xs mt-6">© 2026 Clínica CIAC — Excelencia Veterinaria</p>
     </div>
 </main>
+<script>
+    // En el login, «Atrás» lleva a la página principal informativa (nunca de vuelta al sistema)
+    (function () {
+        history.pushState({login: true}, "", location.href);
+        window.addEventListener("popstate", function () {
+            location.replace("{% url 'usuarios:landing' %}");
+        });
+    })();
+</script>
 {% endblock %}

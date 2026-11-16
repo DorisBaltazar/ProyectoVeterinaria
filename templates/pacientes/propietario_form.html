@@ -8,27 +8,27 @@
 <form method="post" class="bg-white rounded-2xl p-6 md:p-8 space-y-4 max-w-lg">
     {% csrf_token %}
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Cédula de identidad (CI)</label>
+        <label for="{{ form.ci.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Cédula de identidad (CI)</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.ci }}</div>
         {% for e in form.ci.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre completo</label>
+        <label for="{{ form.nombre_completo.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre completo</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre_completo }}</div>
         {% for e in form.nombre_completo.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Teléfono</label>
+        <label for="{{ form.telefono.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Teléfono</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.telefono }}</div>
         {% for e in form.telefono.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Correo electrónico (opcional)</label>
+        <label for="{{ form.correo.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Correo electrónico (opcional)</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.correo }}</div>
         {% for e in form.correo.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Dirección (opcional)</label>
+        <label for="{{ form.direccion.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Dirección (opcional)</label>
         <div class="bg-surface-container-highest rounded-xl p-1">{{ form.direccion }}</div>
         {% for e in form.direccion.errors %}<p class="text-error text-sm mt-1">{{ e }}</p>{% endfor %}
     </div>

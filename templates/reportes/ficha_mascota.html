@@ -19,15 +19,15 @@ thead{display:table-header-group}tr{break-inside:avoid}
 <div class="cab"><div style="display:flex;align-items:center"><div class="logo">🐾</div><div><h1>Ficha clínica — {{ m.nombre }}</h1><p>Clínica CIAC · Código {{ m.codigo }}</p></div></div><div style="text-align:right;font-size:11px">Generado el {{ generado|date:"d/m/Y H:i" }}<br>por {{ usuario }}</div></div>
 {% if m.alerta_medica %}<div class="alerta">⚠ <b>ALERTA MÉDICA:</b> {{ m.alerta_medica }}</div>{% endif %}
 <h2>Datos del paciente</h2>
-<table class="datos"><tr><th>Código</th><td>{{ m.codigo }}</td><th>Nombre</th><td>{{ m.nombre }}</td></tr>
-<tr><th>Especie / Raza</th><td>{{ m.get_especie_display }} {{ m.raza }}</td><th>Sexo</th><td>{{ m.get_sexo_display }}</td></tr>
-<tr><th>Edad</th><td>{{ m.edad_texto|default:"—" }}</td><th>Peso actual</th><td>{% if m.peso_actual %}{{ m.peso_actual }} kg{% else %}—{% endif %}</td></tr>
-<tr><th>Propietario</th><td>{{ m.propietario.nombre_completo }} (CI {{ m.propietario.ci }})</td><th>Teléfono</th><td>{{ m.propietario.telefono }}</td></tr></table>
+<table class="datos"><tr><th scope="row">Código</th><td>{{ m.codigo }}</td><th scope="row">Nombre</th><td>{{ m.nombre }}</td></tr>
+<tr><th scope="row">Especie / Raza</th><td>{{ m.get_especie_display }} {{ m.raza }}</td><th scope="row">Sexo</th><td>{{ m.get_sexo_display }}</td></tr>
+<tr><th scope="row">Edad</th><td>{{ m.edad_texto|default:"—" }}</td><th scope="row">Peso actual</th><td>{% if m.peso_actual %}{{ m.peso_actual }} kg{% else %}—{% endif %}</td></tr>
+<tr><th scope="row">Propietario</th><td>{{ m.propietario.nombre_completo }} (CI {{ m.propietario.ci }})</td><th scope="row">Teléfono</th><td>{{ m.propietario.telefono }}</td></tr></table>
 <h2>Historial de peso</h2>
-<table><thead><tr><th>Fecha</th><th>Peso (kg)</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">Fecha</th><th scope="col">Peso (kg)</th></tr></thead><tbody>
 {% for p in pesos %}<tr><td>{{ p.fecha|date:"d/m/Y" }}</td><td>{{ p.peso_kg }}</td></tr>{% empty %}<tr><td colspan="2">Sin mediciones.</td></tr>{% endfor %}</tbody></table>
 <h2>Historial clínico ({{ historiales|length }})</h2>
-<table><thead><tr><th>Fecha</th><th>Tipo</th><th>Motivo</th><th>Diagnóstico</th><th>Tratamiento</th><th>Medicamentos</th><th>Veterinario</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">Fecha</th><th scope="col">Tipo</th><th scope="col">Motivo</th><th scope="col">Diagnóstico</th><th scope="col">Tratamiento</th><th scope="col">Medicamentos</th><th scope="col">Veterinario</th></tr></thead><tbody>
 {% for h in historiales %}<tr><td>{{ h.fecha_atencion|date:"d/m/Y H:i" }}</td><td>{{ h.get_tipo_atencion_display }}</td><td>{{ h.motivo }}</td><td>{{ h.diagnostico }}</td><td>{{ h.tratamiento }}</td><td>{{ h.medicamentos }}</td><td>{{ h.veterinario.get_full_name|default:h.veterinario.username }}</td></tr>
 {% for r in h.resultados_lab.all %}<tr><td></td><td colspan="6">Lab — {{ r.nombre_variable }}: {{ r.valor|unlocalize }} {{ r.unidad }} {{ r.observacion }}</td></tr>{% endfor %}
 {% empty %}<tr><td colspan="7">Sin atenciones registradas.</td></tr>{% endfor %}</tbody></table>

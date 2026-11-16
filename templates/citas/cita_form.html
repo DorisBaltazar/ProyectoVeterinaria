@@ -7,7 +7,7 @@
     {% csrf_token %}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2 bg-teal-50 rounded-2xl p-4">
-            <label class="text-xs font-bold uppercase tracking-wider text-primary mb-1 block">Buscar propietario registrado</label>
+            <label for="buscar-propietario" class="text-xs font-bold uppercase tracking-wider text-primary mb-1 block">Buscar propietario registrado</label>
             <input type="search" id="buscar-propietario" list="lista-propietarios" autocomplete="off"
                    placeholder="Escribe un nombre o CI y elígelo de la lista…"
                    class="w-full bg-white border-none rounded-xl p-3 focus:ring-2 focus:ring-primary/20">
@@ -17,51 +17,51 @@
             <p class="text-xs text-secondary mt-2" id="ayuda-propietario">Al elegirlo se llenan solos su nombre, teléfono y mascotas. Si no está registrado, escribe sus datos en los campos de abajo.</p>
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre del propietario</label>
+            <label for="{{ form.propietario_nombre.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre del propietario</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.propietario_nombre }}</div>
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Teléfono</label>
+            <label for="{{ form.propietario_telefono.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Teléfono</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.propietario_telefono }}</div>
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre de la mascota</label>
+            <label for="{{ form.mascota_nombre.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre de la mascota</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.mascota_nombre }}</div>
             <datalist id="lista-mascotas"></datalist>
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Especie</label>
+            <label for="{{ form.especie.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Especie</label>
             {{ form.especie }}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha</label>
+            <label for="{{ form.fecha.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha</label>
             {{ form.fecha }}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Hora</label>
+            <label for="{{ form.hora.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Hora</label>
             {{ form.hora }}
         </div>
         <div class="md:col-span-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Motivo de consulta</label>
+            <label for="{{ form.motivo.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Motivo de consulta</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.motivo }}</div>
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Veterinario asignado</label>
+            <label for="{{ form.veterinario.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Veterinario asignado</label>
             {{ form.veterinario }}
         </div>
         {% if form.estado %}
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Estado</label>
+            <label for="{{ form.estado.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Estado</label>
             {{ form.estado }}
         </div>
         {% else %}
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Estado</label>
+            <span class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Estado</span>
             <p class="px-3 py-3 text-sm text-secondary">Se crea como <strong>Pendiente</strong>. Podrás cambiarlo desde el listado.</p>
         </div>
         {% endif %}
         <div class="md:col-span-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observaciones</label>
+            <label for="{{ form.observaciones.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Observaciones</label>
             {{ form.observaciones }}
         </div>
     </div>

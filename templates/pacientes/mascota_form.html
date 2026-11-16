@@ -15,7 +15,7 @@
 
     <!-- Foto de la mascota -->
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-2 block">Foto de la mascota</label>
+        <span class="text-xs font-bold uppercase tracking-wider text-secondary mb-2 block">Foto de la mascota</span>
         <div class="flex items-center gap-5">
             <div id="foto-preview" class="w-24 h-24 rounded-2xl bg-teal-50 flex items-center justify-center overflow-hidden shrink-0">
                 {% if object.foto %}
@@ -24,7 +24,7 @@
                     <span class="material-symbols-outlined text-primary text-4xl">pets</span>
                 {% endif %}
             </div>
-            <label class="cursor-pointer">
+            <label for="{{ form.foto.id_for_label }}" class="cursor-pointer">
                 <span class="inline-flex items-center gap-2 bg-surface-container-highest hover:bg-surface-container-high px-4 py-2.5 rounded-xl font-medium text-sm transition">
                     <span class="material-symbols-outlined text-lg">upload</span> Subir foto
                 </span>
@@ -37,50 +37,50 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Propietario</label>
+            <label for="{{ form.propietario.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Propietario</label>
             {{ form.propietario }}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre de la mascota</label>
+            <label for="{{ form.nombre.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Nombre de la mascota</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.nombre }}</div>
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Especie</label>
+            <label for="{{ form.especie.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Especie</label>
             {{ form.especie }}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Raza</label>
+            <label for="{{ form.raza.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Raza</label>
             <div class="bg-surface-container-highest rounded-xl p-1">{{ form.raza }}</div>
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Sexo</label>
+            <label for="{{ form.sexo.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Sexo</label>
             {{ form.sexo }}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha de nacimiento</label>
+            <label for="{{ form.fecha_nacimiento.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Fecha de nacimiento</label>
             {{ form.fecha_nacimiento }}
             {% if form.fecha_nacimiento.errors %}<p class="text-error text-sm mt-1">{{ form.fecha_nacimiento.errors.0 }}</p>{% endif %}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">…o edad aproximada</label>
+            <label for="{{ form.edad_anios.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">…o edad aproximada</label>
             <div class="grid grid-cols-2 gap-2">{{ form.edad_anios }}{{ form.edad_meses }}</div>
             <p class="text-xs text-outline mt-1">Úsala si no conoces la fecha exacta: años y meses.</p>
             {% if form.edad_anios.errors %}<p class="text-error text-sm mt-1">{{ form.edad_anios.errors.0 }}</p>{% endif %}
             {% if form.edad_meses.errors %}<p class="text-error text-sm mt-1">{{ form.edad_meses.errors.0 }}</p>{% endif %}
         </div>
         <div>
-            <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Peso (kg)</label>
+            <label for="{{ form.peso_kg.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Peso (kg)</label>
             {{ form.peso_kg }}
         </div>
     </div>
 
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Alerta médica (opcional)</label>
+        <label for="{{ form.alerta_medica.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Alerta médica (opcional)</label>
         {{ form.alerta_medica }}
     </div>
 
     <div>
-        <label class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Notas adicionales</label>
+        <label for="{{ form.notas.id_for_label }}" class="text-xs font-bold uppercase tracking-wider text-secondary mb-1 block">Notas adicionales</label>
         {{ form.notas }}
     </div>
 
