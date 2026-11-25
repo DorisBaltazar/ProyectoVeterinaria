@@ -152,6 +152,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Fotos de mascotas: si defines CLOUDINARY_URL se guardan en Cloudinary (permanente);
+# si no, se guardan en la carpeta media/ del servidor.
+USA_CLOUDINARY = bool(env("CLOUDINARY_URL", default=""))
+if USA_CLOUDINARY:
+    STORAGES = {
+        "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --- Autenticación / RBAC ---
