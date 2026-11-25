@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'usuarios.middleware.SinCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -137,6 +138,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -148,3 +150,7 @@ CSRF_FAILURE_VIEW = 'usuarios.views.csrf_fallo'
 LOGIN_URL = 'usuarios:login'
 LOGIN_REDIRECT_URL = 'usuarios:dashboard'
 LOGOUT_REDIRECT_URL = 'usuarios:login'
+
+
+# Docker / produccion: origenes confiables para CSRF (ej. http://localhost:8000)
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:8000', 'http://127.0.0.1:8000'])
