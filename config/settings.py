@@ -183,3 +183,11 @@ if RENDER_EXTERNAL_HOSTNAME:
 if env.bool("HTTPS", default=False):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+# Mostrar errores 500 (traceback) en los logs de la consola (Render > Logs)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "loggers": {"django.request": {"handlers": ["console"], "level": "ERROR", "propagate": False}},
+}
