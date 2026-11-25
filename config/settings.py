@@ -28,6 +28,11 @@ SECRET_KEY = env("SECRET_KEY", default=get_random_secret_key())
 DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
+# Render publica el dominio de la aplicación en esta variable
+RENDER_EXTERNAL_HOSTNAME = env("RENDER_EXTERNAL_HOSTNAME", default="")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 # Application definition
 
@@ -96,6 +101,10 @@ DATABASES = {
     }
 }
 
+# En la nube (Render, Neon, Supabase) la base llega como una sola URL: DATABASE_URL
+if env("DATABASE_URL", default=""):
+    DATABASES["default"] = env.db("DATABASE_URL")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -154,3 +163,14 @@ LOGOUT_REDIRECT_URL = 'usuarios:login'
 
 # Docker / produccion: origenes confiables para CSRF (ej. http://localhost:8000)
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:8000', 'http://127.0.0.1:8000'])
+
+# --- HTTPS en producción (Render) ---
+# Render termina el HTTPS en su proxy; Django debe confiar en ese encabezado.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
+# Con HTTPS=True las cookies viajan solo por conexión segura (no usar en http://localhost)
+if env.bool("HTTPS", default=False):
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
